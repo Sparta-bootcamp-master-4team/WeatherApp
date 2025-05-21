@@ -7,6 +7,11 @@
 
 import RxSwift
 
+// MARK: - FetchCoordinateUseCaseProtocol
+
 protocol FetchCoordinateUseCaseProtocol {
+
+    // MARK: - UseCase Execution
+
     func execute(query: String) -> Single<Location?>
 }

@@ -7,7 +7,15 @@
 
 import RxSwift
 
+// MARK: - GeocodingRepositoryProtocol
+
 protocol GeocodingRepositoryProtocol {
+    
+    // MARK: - Coordinate Fetching
+
     func fetchCoordinate(for query: String) -> Single<Location?>
+
+    // MARK: - Public Methods
+
     func searchDongs(matching query: String) -> [String]
 }

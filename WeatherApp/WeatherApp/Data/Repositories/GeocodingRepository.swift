@@ -7,13 +7,21 @@
 
 import RxSwift
 
+// MARK: - GeocodingRepository
+
 final class GeocodingRepository: GeocodingRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let service: GeocodingServiceProtocol
+
+    // MARK: - Initializer
 
     init(service: GeocodingServiceProtocol) {
         self.service = service
     }
+
+    // MARK: - Public Methods
 
     func fetchCoordinate(for query: String) -> Single<Location?> {
         return service.fetchCoordinate(for: query)
