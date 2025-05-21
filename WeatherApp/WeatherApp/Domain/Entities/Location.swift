@@ -5,18 +5,28 @@
 //  Created by 양원식 on 5/20/25.
 //
 
-struct LocationAPIResponse: Codable {
-    let documents: [Location]
+struct KakaoAddressResponse: Decodable {
+    let documents: [KakaoDocument]
 }
 
-struct Location: Codable {
+struct KakaoDocument: Decodable {
+    let address: KakaoAddress?
+}
+
+struct KakaoAddress: Decodable {
     let addressName: String
-    let longitude: String
-    let latitude: String
-    
+    let x: String
+    let y: String
+
     enum CodingKeys: String, CodingKey {
         case addressName = "address_name"
-        case longitude = "x"
-        case latitude = "y"
+        case x
+        case y
     }
+}
+
+struct Location {
+    let name: String
+    let latitude: String
+    let longitude: String
 }

@@ -8,20 +8,38 @@
 import Foundation
 import RxSwift
 
-final class GeocodingService {
+protocol GeocodingServiceProtocol {
+    func searchDongs(matching query: String) -> [String] 
+    func fetchCoordinate(for query: String) -> Single<Location?>
+}
 
-    private let session: URLSession
-    private let apiKey: String
+final class GeocodingService: GeocodingServiceProtocol {
 
-    init(session: URLSession = .shared) {
-        self.session = session
-        self.apiKey = Bundle.main.kakaoAPIKey
+    private let apiKey = Bundle.main.kakaoAPIKey
+    private let dongList: [String]
+
+    init() {
+        self.dongList = GeocodingService.loadDongList()
     }
 
-    func searchLocation(query: String) -> Single<[Location]> {
+    static private func loadDongList() -> [String] {
+        guard let url = Bundle.main.url(forResource: "dongList", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let list = try? JSONDecoder().decode([String].self, from: data) else {
+            print("동 리스트 로드 실패")
+            return []
+        }
+        return list
+    }
+
+    func searchDongs(matching query: String) -> [String] {
+        return dongList.filter { $0.contains(query) }
+    }
+
+    func fetchCoordinate(for dongName: String) -> Single<Location?> {
         return Single.create { single in
-            guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-                  let url = URL(string: "https://dapi.kakao.com/v2/local/search/keyword.json?query=\(encodedQuery)") else {
+            guard let encoded = dongName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                  let url = URL(string: "https://dapi.kakao.com/v2/local/search/address.json?query=\(encoded)") else {
                 single(.failure(NSError(domain: "Invalid URL", code: -1)))
                 return Disposables.create()
             }
@@ -30,31 +48,23 @@ final class GeocodingService {
             request.httpMethod = "GET"
             request.setValue("KakaoAK \(self.apiKey)", forHTTPHeaderField: "Authorization")
 
-            let task = self.session.dataTask(with: request) { data, _, error in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 if let error = error {
                     single(.failure(error))
                     return
                 }
 
                 guard let data = data,
-                      let response = try? JSONDecoder().decode(LocationAPIResponse.self, from: data) else {
-                    single(.failure(NSError(domain: "Decoding Error", code: -2)))
+                      let decoded = try? JSONDecoder().decode(KakaoAddressResponse.self, from: data),
+                      let address = decoded.documents.first?.address else {
+                    single(.success(nil))
                     return
                 }
-                
-                let filtered = response.documents.filter {
-                    let lastWord = $0.addressName.components(separatedBy: " ").last ?? ""
-                    return lastWord.hasSuffix("동") || lastWord.hasSuffix("읍") || lastWord.hasSuffix("면")
-                }
-                
-                let unique = Dictionary(grouping: filtered, by: { $0.addressName })
-                                    .compactMap { $0.value.first }
 
-                single(.success(unique))
+                single(.success(Location(name: dongName, latitude: address.y, longitude: address.x)))
             }
 
             task.resume()
-
             return Disposables.create { task.cancel() }
         }
     }
