@@ -10,9 +10,15 @@ import RxSwift
 import RxCocoa
 
 class SearchViewController: UIViewController {
+    var onDismiss: ((Location?) -> Void)?
+    
     private let searchView = SearchView()
     private let viewModel = SearchViewModel(fetchCoordinateUseCase: FetchCoordinateUseCase(repository: GeocodingRepository(service: GeocodingService())), searchDongsUseCase: SearchDongsUseCase(repository: GeocodingRepository(service: GeocodingService())))
     private var disposeBag = DisposeBag()
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
     override func loadView() {
         view = searchView
@@ -24,6 +30,8 @@ class SearchViewController: UIViewController {
         setNavigationItem()
         
         bind()
+        
+        setNotificationCenter()
     }
 
     private func setNavigationItem() {
@@ -36,8 +44,11 @@ class SearchViewController: UIViewController {
         navigationItem.rightBarButtonItem?.rx.tap
             .asDriver(onErrorDriveWith: .empty())
             .drive { [weak self] _ in
+                guard let self else { return }
+                
                 print("close button tapped")
-                self?.dismiss(animated: true)
+                dismiss(animated: true)
+                onDismiss?(viewModel.output.searchCoordinatesResult.value)
             }
             .disposed(by: disposeBag)
         
@@ -74,9 +85,48 @@ class SearchViewController: UIViewController {
         viewModel.output.searchCoordinatesResult
             .asDriver(onErrorDriveWith: .empty())
             .skip(1)
-            .drive {
+            .drive { [weak self] in
+                guard let self else { return }
+                
                 print("name: \(String(describing: $0?.name)), latitude: \(String(describing: $0?.latitude)), longitude: \(String(describing: $0?.longitude))")
+                dismiss(animated: true)
+                onDismiss?(viewModel.output.searchCoordinatesResult.value)
             }
             .disposed(by: disposeBag)
+    }
+    
+    // 키보드가 나타날 때, 테이블 뷰 셀 아래쪽이 가려지는 현상 방지
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func keyboardWillShow(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+        else { return }
+        
+        let keyboardHeight = keyboardFrame.height
+        
+        let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        searchView.tableView.contentInset = contentInsets
+        searchView.tableView.scrollIndicatorInsets = contentInsets
+    }
+
+    @objc private func keyboardWillHide(notification: Notification) {
+        let contentInsets = UIEdgeInsets.zero
+        searchView.tableView.contentInset = contentInsets
+        searchView.tableView.scrollIndicatorInsets = contentInsets
     }
 }
