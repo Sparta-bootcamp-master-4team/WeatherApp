@@ -13,4 +13,10 @@ struct Location: Codable {
     let addressName: String
     let longitude: String
     let latitude: String
+    
+    enum CodingKeys: String, CodingKey {
+        case addressName = "address_name"
+        case longitude = "x"
+        case latitude = "y"
+    }
 }
