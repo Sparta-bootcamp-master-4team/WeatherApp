@@ -16,7 +16,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .orange
-        geocodingService.searchLocation(query: "판교")
+        geocodingService.searchLocation(query: "분당")
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { locations in
                 print("검색된 동 리스트:")
