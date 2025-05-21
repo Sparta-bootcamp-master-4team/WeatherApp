@@ -17,8 +17,12 @@ struct RegionResponse: Codable {
 
 struct RegionDocument: Codable {
     let addressName: String
+    let regionTwoDepthName: String
+    let regionThreeDepthName: String
 
     enum CodingKeys: String, CodingKey {
         case addressName = "address_name"
+        case regionTwoDepthName = "region_2depth_name"
+        case regionThreeDepthName = "region_3depth_name"
     }
 }
