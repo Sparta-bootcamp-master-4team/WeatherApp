@@ -48,7 +48,7 @@ final class DailyWeatherCell: UICollectionViewCell {
         return label
     }()
     
-    private let dailyTemperatureRange = DailyTemperatureRange()
+    let dailyTemperatureRange = DailyTemperatureRange()
     
     private let dailyTemperatureRangeStackView: UIStackView = {
         let sv = UIStackView()
@@ -99,6 +99,11 @@ final class DailyWeatherCell: UICollectionViewCell {
         
         iconAndPopStackView.snp.makeConstraints {
             $0.leading.equalTo(weekdayLabel.snp.trailing).offset(48)
+        }
+        
+        dailyTemperatureRange.snp.makeConstraints {
+            $0.width.equalTo(128)
+            $0.height.equalTo(16)
         }
         
         dailyTemperatureRangeStackView.snp.makeConstraints {
