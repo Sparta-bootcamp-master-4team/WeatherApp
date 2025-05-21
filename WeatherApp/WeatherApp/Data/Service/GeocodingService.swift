@@ -69,7 +69,7 @@ final class GeocodingService: GeocodingServiceProtocol {
                 guard let data = data,
                       let decoded = try? JSONDecoder().decode(KakaoAddressResponse.self, from: data),
                       let address = decoded.documents.first?.address else {
-                    single(.success(nil))
+                    single(.failure(NSError(domain: "Decoding or Empty Data Error", code: -1, userInfo: nil)))
                     return
                 }
 
