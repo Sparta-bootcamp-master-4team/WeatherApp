@@ -20,6 +20,7 @@ final class WeatherAPIService {
     static let shared = WeatherAPIService()
     private init() {}
 
+    // 재욱님 코드에 맞게 변경
     private let apiKey = Bundle.main.weatherAPIKey
 
     /// 날씨 데이터를 요청.
