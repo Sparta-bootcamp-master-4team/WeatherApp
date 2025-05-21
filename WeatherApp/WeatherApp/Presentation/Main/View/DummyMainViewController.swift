@@ -9,6 +9,12 @@ import UIKit
 
 // 사용 종료 후 삭제할 예정입니다.
 class DummyMainViewController: UIViewController {
+    
+    private lazy var collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+        cv.register(HourlyWeatherCell.self, forCellWithReuseIdentifier: HourlyWeatherCell.id)
+        return cv
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +32,10 @@ class DummyMainViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    private func createLayout() -> UICollectionViewLayout {
+        return UICollectionViewLayout()
+    }
 
 }
 
