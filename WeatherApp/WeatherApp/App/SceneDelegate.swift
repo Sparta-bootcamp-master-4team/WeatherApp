@@ -20,8 +20,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windowScene)
         
-//        let rootViewController = MainViewController()
-        let rootViewController = DummyMainViewController()
+        let rootViewController = MainPageViewController(
+            viewModel: PageViewModel(),
+            mainViewModel: MainViewModel(
+                fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: WeatherRepositoryImpl()),
+                fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCase(repository: WeatherRepositoryImpl()),
+                fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCase(repository: WeatherRepositoryImpl()),
+                getCurrentLocationUseCase: GetCurrentLocationUseCase(repository: LocationRepository(locationService: LocationService())), reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService()))
+            )
+        )
         window.rootViewController = UINavigationController(rootViewController: rootViewController)
         
         self.window = window
