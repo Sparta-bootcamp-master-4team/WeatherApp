@@ -58,14 +58,19 @@ final class ReverseGeocodingService: ReverseGeocodingServiceProtocol {
                     return
                 }
 
+                if let data = data {
+                    print(String(data: data, encoding: .utf8))
+                }
+
                 guard
                     let data = data,
                     let decoded = try? JSONDecoder().decode(RegionResponse.self, from: data),
-                    let address = decoded.documents.first?.addressName
+                    let firstDoc = decoded.documents.first
                 else {
                     single(.failure(NSError(domain: "Decoding or Empty Data Error", code: -1, userInfo: nil)))
                     return
                 }
+                let address = firstDoc.regionTwoDepthName + " " + firstDoc.regionThreeDepthName
 
                 single(.success(address))
             }
