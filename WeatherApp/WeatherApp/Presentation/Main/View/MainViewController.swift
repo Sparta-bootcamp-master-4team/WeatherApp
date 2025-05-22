@@ -138,7 +138,7 @@ private extension MainViewController {
 
     func setStyle() {
         view.backgroundColor = .systemBackground
-
+        navigationController?.setNavigationBarHidden(true, animated: false) // 시스템이 navigationBar를 자동으로 보이도록 리셋하는 경우가 존재하기에
         // TODO: - 데이터 바인딩 될 시 해당 임시 데이터 삭제
         characterImageView.image = UIImage.clearSky
         dateLabel.text = "오늘 5월 21일"

@@ -54,11 +54,6 @@ class MainDetailViewController: UIViewController {
         configure()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false) // 시스템이 navigationBar를 자동으로 보이도록 리셋하는 경우가 존재하기에
-    }
-
 }
 
 private extension MainDetailViewController {
@@ -71,6 +66,7 @@ private extension MainDetailViewController {
 
     func setStyle() {
         view.backgroundColor = .systemBackground
+        navigationController?.setNavigationBarHidden(true, animated: false) // 시스템이 navigationBar를 자동으로 보이도록 리셋하는 경우가 존재하기에
     }
 
     func setHierarchy() {
