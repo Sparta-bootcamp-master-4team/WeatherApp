@@ -19,15 +19,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        
+
+        let mainViewModel = MainViewModel(
+            fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: WeatherRepositoryImpl()),
+            fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCase(repository: WeatherRepositoryImpl()),
+            fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCase(repository: WeatherRepositoryImpl()),
+            getCurrentLocationUseCase: GetCurrentLocationUseCase(repository: LocationRepository(locationService: LocationService())), reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService()))
+        )
+        let mainDetailViewModel = MainDetailViewModel(
+            hourlyWeatherObservable: mainViewModel.hourlyWeather,
+            dailyWeatherObservable: mainViewModel.dailyWeather
+        )
+
         let rootViewController = MainPageViewController(
             viewModel: PageViewModel(),
-            mainViewModel: MainViewModel(
-                fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: WeatherRepositoryImpl()),
-                fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCase(repository: WeatherRepositoryImpl()),
-                fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCase(repository: WeatherRepositoryImpl()),
-                getCurrentLocationUseCase: GetCurrentLocationUseCase(repository: LocationRepository(locationService: LocationService())), reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService()))
-            )
+            mainViewModel: mainViewModel,
+            mainDetailViewModel: mainDetailViewModel
         )
         window.rootViewController = UINavigationController(rootViewController: rootViewController)
         

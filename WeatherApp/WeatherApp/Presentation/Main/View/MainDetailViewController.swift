@@ -6,9 +6,13 @@
 //
 
 import UIKit
+import RxSwift
+import RxDataSources
 
 class MainDetailViewController: UIViewController {
-    private let viewModel: MainViewModel
+    private let viewModel: MainDetailViewModel
+    
+    private let disposeBag = DisposeBag()
 
     private let upArrowImageView: UIImageView = {
         let imageView = UIImageView()
@@ -38,7 +42,42 @@ class MainDetailViewController: UIViewController {
         return stackView
     }()
 
-    init(viewModel: MainViewModel) {
+    private let detailCollectionView: UICollectionView = {
+        let collectionView = UICollectionView.withCompositionalLayout()
+        collectionView.backgroundColor = .systemBackground
+        collectionView.register(DailyWeatherCell.self, forCellWithReuseIdentifier: DailyWeatherCell.id)
+        collectionView.register(HourlyWeatherCell.self, forCellWithReuseIdentifier: HourlyWeatherCell.id)
+
+        return collectionView
+    }()
+
+    typealias MainDataSource = RxCollectionViewSectionedReloadDataSource<MainSectionModel>
+
+    lazy var dataSource = MainDataSource(
+        configureCell: {_, collectionView, indexPath, item in
+            switch item {
+            case .dailyWeatherItem(let dailyWeather):
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: DailyWeatherCell.id,
+                    for: indexPath
+                ) as? DailyWeatherCell else {
+                    return UICollectionViewCell()
+                }
+                cell.configure(with: dailyWeather)
+                return cell
+            case .hourlyWeatherItem(let hourlyWeather):
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: HourlyWeatherCell.id,
+                    for: indexPath) as? HourlyWeatherCell else {
+                    return UICollectionViewCell()
+                }
+                cell.configure(with: hourlyWeather)
+                return cell
+            }
+        }
+    )
+
+    init(viewModel: MainDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -84,7 +123,9 @@ private extension MainDetailViewController {
     }
 
     func setBindinds() {
-
+        viewModel.sections?
+            .bind(to: detailCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
     }
 
 }

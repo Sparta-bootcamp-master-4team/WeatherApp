@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import SnapKit
+import RxDataSources
 
 class MainViewController: UIViewController {
     private let viewModel: MainViewModel
@@ -208,5 +209,6 @@ private extension MainViewController {
         viewModel.currentLocationText?
             .drive(locationWeatherLabel.rx.text)
             .disposed(by: disposeBag)
+        
     }
 }

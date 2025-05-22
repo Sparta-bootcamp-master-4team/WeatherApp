@@ -18,13 +18,19 @@ final class MainViewModel {
 
     // MARK: - ViewModel -> View
     private let currentWeatherRelay = BehaviorRelay<CurrentWeather?>(value: nil)
-    private let dailyWeatherRelay = BehaviorRelay<[DailyWeather]?>(value: [])
-    private let hourlyWeatherRelay = BehaviorRelay<HourlyWeather?>(value: nil)
+    private let dailyWeatherRelay = BehaviorRelay<[DailyWeather]>(value: [])
+    private let hourlyWeatherRelay = BehaviorRelay<[HourlyWeather]>(value: [])
     private let currentLocationRelay = BehaviorRelay<Location>(value: Location(name: "My Home", latitude: "37.440070781162675", longitude: "127.12814126170936"))
     private let currentLocationTextRelay = BehaviorRelay<String>(value: "위치 불러오는 중...")
 
     var currentWeather: Driver<CurrentWeather?> {
         currentWeatherRelay.asDriver()
+    }
+    var dailyWeather: Observable<[DailyWeather]> {
+        dailyWeatherRelay.asObservable() // mainDetailVM에서 sections에 넣을 데이터인데, Driver는 UI 바인딩에 최적화되어있기에.
+    }
+    var hourlyWeather: Observable<[HourlyWeather]> {
+        hourlyWeatherRelay.asObservable()
     }
     var currentTemp: Driver<String>?
     var todayMaxTemp: Driver<String>?
@@ -33,13 +39,7 @@ final class MainViewModel {
         currentLocationTextRelay.asDriver()
     }
 
-    var dailyWeather: Driver<[DailyWeather]?> {
-        dailyWeatherRelay.asDriver()
-    }
-    var hourlyWeather: Driver<HourlyWeather?> {
-        hourlyWeatherRelay.asDriver()
-    }
-
+    
 
     // MARK: - View -> ViewModel
     let didEnterRelay = PublishRelay<Void>()
@@ -107,6 +107,12 @@ final class MainViewModel {
                         dailyWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
                 // 남은 일자, 시간 별 데이터도 fetch 필요
+                self.fetchHourlyWeatherUseCase.execute(lat: latitude, lon: longitude)
+                    .subscribe(onSuccess: { [weak self] value in
+                        print(value)
+                        guard let self else { return }
+                        hourlyWeatherRelay.accept(value)
+                    }).disposed(by: disposeBag)
 
             }).disposed(by: disposeBag)
 
@@ -117,19 +123,17 @@ final class MainViewModel {
             }.asDriver(onErrorJustReturn: "--")
         todayMaxTemp = dailyWeatherRelay
             .map { weathers in
-                guard let max = weathers?.first?.temp.max else { return "-" }
+                guard let max = weathers.first?.temp.max else { return "-" }
 
                 print("최고 기온 : \(Float(max).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(max).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
         todayMinTemp = dailyWeatherRelay
             .map { weathers in
-                guard let min = weathers?.first?.temp.min else { return "-" }
+                guard let min = weathers.first?.temp.min else { return "-" }
                 print("최저 기온 : \(Float(min).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(min).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
-
-
     }
 
 }
