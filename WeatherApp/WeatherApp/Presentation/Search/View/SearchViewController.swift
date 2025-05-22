@@ -13,6 +13,7 @@ class SearchViewController: UIViewController {
     var onDismiss: ((Location?) -> Void)?
     
     private let searchView = SearchView()
+    private let noResultsView = NoResultsView()
     private let viewModel = SearchViewModel(fetchCoordinateUseCase: FetchCoordinateUseCase(repository: GeocodingRepository(service: GeocodingService())), searchDongsUseCase: SearchDongsUseCase(repository: GeocodingRepository(service: GeocodingService())))
     private var disposeBag = DisposeBag()
     
@@ -71,6 +72,30 @@ class SearchViewController: UIViewController {
                     _, element, cell in
                     cell.configureUI(text: element)
                 }
+            .disposed(by: disposeBag)
+        
+        // 동 검색결과가 없으면 결과없음 레이블 표시
+        viewModel.output.searchDongResults
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] results in
+                guard let self else { return }
+                
+                if results.isEmpty {
+                    searchView.tableView.backgroundView = noResultsView
+                } else {
+                    searchView.tableView.backgroundView = nil
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        // 결과없음 레이블이 보일 때, 최근 검색어를 같이 표시(예: "ㅇㅇ"에 대한 검색 결과가 없습니다)
+        searchView.searchBar.rx.text
+            .orEmpty
+            .asDriver(onErrorDriveWith: .empty())
+            .skip(1)
+            .drive { [weak self] in
+                self?.noResultsView.update(searchText: $0)
+            }
             .disposed(by: disposeBag)
         
         // 테이블 뷰 셀 선택
