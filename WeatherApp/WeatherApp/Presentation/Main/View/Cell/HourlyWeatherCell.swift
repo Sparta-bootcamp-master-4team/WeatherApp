@@ -75,12 +75,4 @@ final class HourlyWeatherCell: UICollectionViewCell {
         }
         temperatureLabel.text = "\(Int(hourlyWeather.temp))°C"
     }
-    
-//    func configure(with dummyWeather: DummyHourlyWeather) {
-//        timeLabel.text = dummyWeather.time
-//        if let url = URL(string: "https://openweathermap.org/img/wn/\(dummyWeather.weatherIcon)@2x.png") {
-//            weatherIconImageView.kf.setImage(with: url)
-//        }
-//        temperatureLabel.text = "\(dummyWeather.temperature)°C"
-//    }
 }

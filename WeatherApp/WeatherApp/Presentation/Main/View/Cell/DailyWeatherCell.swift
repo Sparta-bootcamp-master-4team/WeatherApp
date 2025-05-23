@@ -130,21 +130,4 @@ final class DailyWeatherCell: UICollectionViewCell {
             globalMax: range.highestMaxTemp
         )
     }
-    
-//    func configure(with dummyWeather: DummyDailyWeather) {
-//        weekdayLabel.text = dummyWeather.date
-//        if let url = URL(string: "https://openweathermap.org/img/wn/\(dummyWeather.weatherIcon)@2x.png") {
-//            weatherIconImageView.kf.setImage(with: url)
-//        }
-//        popLabel.text = "\(dummyWeather.pop)"
-//        highTempLabel.text = "\(Int(dummyWeather.highTemperature))°C"
-//        lowTempLabel.text = "\(Int(dummyWeather.lowTemperature))°C"
-//        
-//        dailyTemperatureRange.configure(
-//            min: dummyWeather.lowTemperature,
-//            max: dummyWeather.highTemperature,
-//            globalMin: dummyWeather.weeklyLowTemperatures,
-//            globalMax: dummyWeather.weeklyHighTemperatures
-//        )
-//    }
 }
