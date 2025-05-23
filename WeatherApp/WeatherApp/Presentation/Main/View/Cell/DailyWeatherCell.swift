@@ -112,20 +112,39 @@ final class DailyWeatherCell: UICollectionViewCell {
         }
     }
     
-    func configure(with dummyWeather: DummyDailyWeather) {
-        weekdayLabel.text = dummyWeather.date
-        if let url = URL(string: "https://openweathermap.org/img/wn/\(dummyWeather.weatherIcon)@2x.png") {
-            weatherIconImageView.kf.setImage(with: url)
+    func configure(dailyWeather: DailyWeather, range: TemperatureRange) {
+        weekdayLabel.text = "\(dailyWeather.dt)"
+        if let icon = dailyWeather.weather.first?.icon {
+            if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {
+                weatherIconImageView.kf.setImage(with: url)
+            }
         }
-        popLabel.text = "\(dummyWeather.pop)"
-        highTempLabel.text = "\(Int(dummyWeather.highTemperature))°C"
-        lowTempLabel.text = "\(Int(dummyWeather.lowTemperature))°C"
+//        popLabel.text = dailyWeather
+        highTempLabel.text = "\(Int(dailyWeather.temp.max))"
+        lowTempLabel.text = "\(Int(dailyWeather.temp.min))"
         
         dailyTemperatureRange.configure(
-            min: dummyWeather.lowTemperature,
-            max: dummyWeather.highTemperature,
-            globalMin: dummyWeather.weeklyLowTemperatures,
-            globalMax: dummyWeather.weeklyHighTemperatures
+            min: dailyWeather.temp.min,
+            max: dailyWeather.temp.max,
+            globalMin: range.highestMinTemp,
+            globalMax: range.highestMaxTemp
         )
     }
+    
+//    func configure(with dummyWeather: DummyDailyWeather) {
+//        weekdayLabel.text = dummyWeather.date
+//        if let url = URL(string: "https://openweathermap.org/img/wn/\(dummyWeather.weatherIcon)@2x.png") {
+//            weatherIconImageView.kf.setImage(with: url)
+//        }
+//        popLabel.text = "\(dummyWeather.pop)"
+//        highTempLabel.text = "\(Int(dummyWeather.highTemperature))°C"
+//        lowTempLabel.text = "\(Int(dummyWeather.lowTemperature))°C"
+//        
+//        dailyTemperatureRange.configure(
+//            min: dummyWeather.lowTemperature,
+//            max: dummyWeather.highTemperature,
+//            globalMin: dummyWeather.weeklyLowTemperatures,
+//            globalMax: dummyWeather.weeklyHighTemperatures
+//        )
+//    }
 }
