@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct DailyWeatherAndTemperaturnRange {
+struct DailyWeatherAndTemperatureRange {
     let dailyWeather: [DailyWeather]
     let temperatureRange: TemperatureRange
 }

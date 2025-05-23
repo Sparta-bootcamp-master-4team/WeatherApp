@@ -53,18 +53,17 @@ class MainDetailViewController: UIViewController {
 
     typealias MainDataSource = RxCollectionViewSectionedReloadDataSource<MainSectionModel>
 
-    lazy var dataSource = MainDataSource(
+    let dataSource = MainDataSource(
         configureCell: {_, collectionView, indexPath, item in
             switch item {
-            case .dailyWeatherItem(let dailyWeather):
+            case .dailyWeatherListItem(let dailyWeatherAndTempRange):
                 guard let cell = collectionView.dequeueReusableCell(
                     withReuseIdentifier: DailyWeatherCell.id,
                     for: indexPath
                 ) as? DailyWeatherCell else {
                     return UICollectionViewCell()
                 }
-                let dummyRange = TemperatureRange(highestMinTemp: 0, highestMaxTemp: 0)
-                cell.configure(dailyWeather: dailyWeather, range: dummyRange)
+                cell.configure(dailyWeather: dailyWeatherAndTempRange.dailyWeather[indexPath.item], range: dailyWeatherAndTempRange.temperatureRange)
                 return cell
             case .hourlyWeatherItem(let hourlyWeather):
                 guard let cell = collectionView.dequeueReusableCell(
@@ -110,7 +109,7 @@ private extension MainDetailViewController {
     }
 
     func setHierarchy() {
-        view.addSubviews(views: topStackView)
+        view.addSubviews(views: topStackView, detailCollectionView)
         topStackView.addArrangedSubviews(views: upArrowImageView, upNoticeLabel)
     }
 
@@ -121,10 +120,16 @@ private extension MainDetailViewController {
             $0.width.equalTo(140)
             $0.height.equalTo(40)
         }
+
+        detailCollectionView.snp.makeConstraints {
+            $0.top.equalTo(topStackView.snp.bottom).offset(20)
+            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 
     func setBindinds() {
-        viewModel.sections?
+        viewModel.sections
             .bind(to: detailCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }

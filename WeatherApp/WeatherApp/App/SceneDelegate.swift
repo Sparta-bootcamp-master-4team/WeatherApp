@@ -24,11 +24,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: WeatherRepositoryImpl()),
             fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCase(repository: WeatherRepositoryImpl()),
             fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCase(repository: WeatherRepositoryImpl()),
-            getCurrentLocationUseCase: GetCurrentLocationUseCase(repository: LocationRepository(locationService: LocationService())), reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService()))
+            getCurrentLocationUseCase: GetCurrentLocationUseCase(repository: LocationRepository(locationService: LocationService())), reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService())), getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperaturnRangeUseCase(fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: WeatherRepositoryImpl()), fetchTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCase(repository: WeatherRepositoryImpl()))
         )
         let mainDetailViewModel = MainDetailViewModel(
             hourlyWeatherObservable: mainViewModel.hourlyWeather,
-            dailyWeatherObservable: mainViewModel.dailyWeather
+            dailyWeatherAndTemperatureRangeObservable: mainViewModel.dailyWeatherAndTemperatureRange
         )
 
         let rootViewController = MainPageViewController(

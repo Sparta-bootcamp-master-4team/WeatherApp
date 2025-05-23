@@ -14,6 +14,7 @@ final class MainViewModel {
     private let fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCaseProtocol
     private let getCurrentLocationUseCase: GetCurrentLocationUseCaseProtocol
     private let reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol
+    private let getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol
     private let disposeBag = DisposeBag()
 
     // MARK: - ViewModel -> View
@@ -22,12 +23,13 @@ final class MainViewModel {
     private let hourlyWeatherRelay = BehaviorRelay<[HourlyWeather]>(value: [])
     private let currentLocationRelay = BehaviorRelay<Location>(value: Location(name: "My Home", latitude: "37.440070781162675", longitude: "127.12814126170936"))
     private let currentLocationTextRelay = BehaviorRelay<String>(value: "위치 불러오는 중...")
+    private let dailyWeatherAndtemperatureRangeRelay = BehaviorRelay<DailyWeatherAndTemperatureRange?>(value: nil)
 
     var currentWeather: Driver<CurrentWeather?> {
         currentWeatherRelay.asDriver()
     }
-    var dailyWeather: Observable<[DailyWeather]> {
-        dailyWeatherRelay.asObservable() // mainDetailVM에서 sections에 넣을 데이터인데, Driver는 UI 바인딩에 최적화되어있기에.
+    var dailyWeatherAndTemperatureRange: Observable<DailyWeatherAndTemperatureRange?> {
+        dailyWeatherAndtemperatureRangeRelay.asObservable()
     }
     var hourlyWeather: Observable<[HourlyWeather]> {
         hourlyWeatherRelay.asObservable()
@@ -49,13 +51,15 @@ final class MainViewModel {
         fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCaseProtocol,
         fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCaseProtocol,
         getCurrentLocationUseCase: GetCurrentLocationUseCaseProtocol,
-        reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol
+        reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol,
+        getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol
     ) {
         self.fetchDailyWeatherUseCase = fetchDailyWeatherUseCase
         self.fetchHourlyWeatherUseCase = fetchHourlyWeatherUseCase
         self.fetchCurrentWeatherUseCase = fetchCurrentWeatherUseCase
         self.getCurrentLocationUseCase = getCurrentLocationUseCase
         self.reverseGeocodingUseCase = reverseGeocodingUseCase
+        self.getDailyWeatherAndTemperatureRangeUseCase = getDailyWeatherAndTemperatureRangeUseCase
 
         bind()
     }
@@ -112,6 +116,11 @@ final class MainViewModel {
                         print(value)
                         guard let self else { return }
                         hourlyWeatherRelay.accept(value)
+                    }).disposed(by: disposeBag)
+                self.getDailyWeatherAndTemperatureRangeUseCase.execute(lat: latitude, lon: longitude)
+                    .subscribe(onSuccess: { [weak self] value in
+                        guard let self else { return }
+                        dailyWeatherAndtemperatureRangeRelay.accept(value)
                     }).disposed(by: disposeBag)
 
             }).disposed(by: disposeBag)

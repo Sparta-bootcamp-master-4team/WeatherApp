@@ -113,6 +113,7 @@ final class DailyWeatherCell: UICollectionViewCell {
     }
     
     func configure(dailyWeather: DailyWeather, range: TemperatureRange) {
+        print("dailyWeather: \(dailyWeather)")
         weekdayLabel.text = "\(dailyWeather.dt)"
         if let icon = dailyWeather.weather.first?.icon {
             if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {
