@@ -66,11 +66,13 @@ final class HourlyWeatherCell: UICollectionViewCell {
         }
     }
     
-    func configure(with dummyWeather: DummyHourlyWeather) {
-        timeLabel.text = dummyWeather.time
-        if let url = URL(string: "https://openweathermap.org/img/wn/\(dummyWeather.weatherIcon)@2x.png") {
-            weatherIconImageView.kf.setImage(with: url)
+    func configure(with hourlyWeather: HourlyWeather) {
+        timeLabel.text = "\(hourlyWeather.dt)"
+        if let icon = hourlyWeather.weather.first?.icon {
+            if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {
+                weatherIconImageView.kf.setImage(with: url)
+            }
         }
-        temperatureLabel.text = "\(dummyWeather.temperature)°C"
+        temperatureLabel.text = "\(Int(hourlyWeather.temp))°C"
     }
 }

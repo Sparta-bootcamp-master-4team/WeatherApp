@@ -63,7 +63,8 @@ class MainDetailViewController: UIViewController {
                 ) as? DailyWeatherCell else {
                     return UICollectionViewCell()
                 }
-                cell.configure(with: dailyWeather)
+                let dummyRange = TemperatureRange(highestMinTemp: 0, highestMaxTemp: 0)
+                cell.configure(dailyWeather: dailyWeather, range: dummyRange)
                 return cell
             case .hourlyWeatherItem(let hourlyWeather):
                 guard let cell = collectionView.dequeueReusableCell(
