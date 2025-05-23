@@ -28,24 +28,12 @@ class ListViewController: UIViewController {
         setNavigationItem()
         
         bind()
-        
-        sampleDataProvider()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         viewModel.input.accept(.onAppear)
-    }
-    
-    // 저를 삭제해 주세요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    func sampleDataProvider() {
-        let locations = [
-            Location(name: "서울시 강남구 청담동", latitude: "22", longitude: "11"),
-            Location(name: "서울시 강남구 삼성동", latitude: "22", longitude: "11")
-        ]
-        
-        viewModel.output.lists.accept(locations)
     }
     
     private func setNavigationItem() {

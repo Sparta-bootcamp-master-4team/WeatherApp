@@ -14,7 +14,7 @@ class SearchViewController: UIViewController {
     
     private let searchView = SearchView()
     private let noResultsView = NoResultsView()
-    private let viewModel = SearchViewModel(fetchCoordinateUseCase: FetchCoordinateUseCase(repository: GeocodingRepository(service: GeocodingService())), searchDongsUseCase: SearchDongsUseCase(repository: GeocodingRepository(service: GeocodingService())))
+    private let viewModel = SearchViewModel()
     private var disposeBag = DisposeBag()
     
     deinit {

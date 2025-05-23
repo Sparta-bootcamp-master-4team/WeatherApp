@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-final class SearchViewModel {
+final class SearchViewModel: ViewModelProtocol {
     enum Input {
         case searchTextChanged(String)
         case didSelectTableViewCell(String)
@@ -26,11 +26,11 @@ final class SearchViewModel {
     
     private let fetchCoordinateUseCase: FetchCoordinateUseCase
     private let searchDongsUseCase: SearchDongsUseCase
-    private var disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     init (
-        fetchCoordinateUseCase: FetchCoordinateUseCase,
-        searchDongsUseCase: SearchDongsUseCase
+        fetchCoordinateUseCase: FetchCoordinateUseCase = FetchCoordinateUseCase(repository: GeocodingRepository(service: GeocodingService())),
+        searchDongsUseCase: SearchDongsUseCase = SearchDongsUseCase(repository: GeocodingRepository(service: GeocodingService()))
     ) {
         self.fetchCoordinateUseCase = fetchCoordinateUseCase
         self.searchDongsUseCase = searchDongsUseCase
