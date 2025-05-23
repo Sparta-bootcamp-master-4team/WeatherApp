@@ -7,7 +7,7 @@
 
 import RxSwift
 
-final class GetDailyWeatherAndTemperaturnRangeUseCase: GetDailyWeatherAndTemperaturnRangeUseCaseProtocol {
+final class GetDailyWeatherAndTemperaturnRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol {
     
     private let fetchDailyWeatherUseCase: FetchDailyWeatherUseCaseProtocol
     private let fetchTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCaseProtocol
@@ -20,12 +20,12 @@ final class GetDailyWeatherAndTemperaturnRangeUseCase: GetDailyWeatherAndTempera
         self.fetchTemperatureRangeUseCase = fetchTemperatureRangeUseCase
     }
 
-    func execute(lat: Double, lon: Double) -> Single<DailyWeatherAndTemperaturnRange> {
+    func execute(lat: Double, lon: Double) -> Single<DailyWeatherAndTemperatureRange> {
         return Single.zip(
             fetchDailyWeatherUseCase.execute(lat: lat, lon: lon),
             fetchTemperatureRangeUseCase.execute(lat: lat, lon: lon)
         ) { dailyWeatherList, temperatureRange in
-            return DailyWeatherAndTemperaturnRange(
+            return DailyWeatherAndTemperatureRange(
                 dailyWeather: dailyWeatherList,
                 temperatureRange: temperatureRange
             )

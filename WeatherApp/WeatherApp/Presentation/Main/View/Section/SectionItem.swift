@@ -8,6 +8,6 @@
 import Foundation
 
 enum SectionItem {
-    case dailyWeatherItem(DailyWeather)
+    case dailyWeatherListItem(DailyWeatherAndTemperatureRange)
     case hourlyWeatherItem(HourlyWeather)
 }
