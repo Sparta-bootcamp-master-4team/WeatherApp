@@ -119,7 +119,7 @@ final class DailyWeatherCell: UICollectionViewCell {
                 weatherIconImageView.kf.setImage(with: url)
             }
         }
-//        popLabel.text = dailyWeather
+        popLabel.text = "\(dailyWeather.pop)%"
         highTempLabel.text = "\(Int(dailyWeather.temp.max))"
         lowTempLabel.text = "\(Int(dailyWeather.temp.min))"
         

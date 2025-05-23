@@ -14,4 +14,5 @@ struct DailyWeather: Decodable {
     let sunset: Int                   // 일몰 시각 (Unix Timestamp)
     let temp: TemperatureInfo         // 시간대별 기온 정보 (아침, 낮, 저녁, 밤 등)
     let weather: [WeatherDescription] // 해당 날짜의 날씨 설명 (보통 1개 요소)
+    let pop: Double
 }
