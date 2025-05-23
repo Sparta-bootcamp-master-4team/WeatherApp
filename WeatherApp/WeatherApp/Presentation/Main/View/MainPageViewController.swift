@@ -12,17 +12,20 @@ class MainPageViewController: UIPageViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: PageViewModel
     private let mainViewModel: MainViewModel
+    private let mainDetailViewModel: MainDetailViewModel
 
     private lazy var mainVC = MainViewController(viewModel: self.mainViewModel)
-    private lazy var mainDetailVC = MainDetailViewController(viewModel: self.mainViewModel)
+    private lazy var mainDetailVC = MainDetailViewController(viewModel: self.mainDetailViewModel)
     private lazy var pages: [UIViewController] = [
         mainVC, mainDetailVC
     ]
 
     init(viewModel: PageViewModel,
-         mainViewModel: MainViewModel) {
+         mainViewModel: MainViewModel,
+         mainDetailViewModel: MainDetailViewModel) {
         self.viewModel = viewModel
         self.mainViewModel = mainViewModel
+        self.mainDetailViewModel = mainDetailViewModel
         super.init(transitionStyle: .scroll, navigationOrientation: .vertical, options: nil)
         dataSource = self
         delegate = self

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95622AAF2DDF37A1002FE94C /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = 95622AAE2DDF37A1002FE94C /* Differentiator */; };
+		95622AB12DDF37A1002FE94C /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 95622AB02DDF37A1002FE94C /* RxDataSources */; };
 		E8AF753D2DDC9310009A1DA0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E8AF753C2DDC9310009A1DA0 /* Kingfisher */; };
 		E8AF75402DDC937C009A1DA0 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = E8AF753F2DDC937C009A1DA0 /* RxCocoa */; };
 		E8AF75422DDC937C009A1DA0 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = E8AF75412DDC937C009A1DA0 /* RxRelay */; };
@@ -77,6 +79,8 @@
 				E8AF75402DDC937C009A1DA0 /* RxCocoa in Frameworks */,
 				E8AF75442DDC937C009A1DA0 /* RxSwift in Frameworks */,
 				E8AF753D2DDC9310009A1DA0 /* Kingfisher in Frameworks */,
+				95622AB12DDF37A1002FE94C /* RxDataSources in Frameworks */,
+				95622AAF2DDF37A1002FE94C /* Differentiator in Frameworks */,
 				E8AF75472DDC9390009A1DA0 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,6 +147,8 @@
 				E8AF75412DDC937C009A1DA0 /* RxRelay */,
 				E8AF75432DDC937C009A1DA0 /* RxSwift */,
 				E8AF75462DDC9390009A1DA0 /* SnapKit */,
+				95622AAE2DDF37A1002FE94C /* Differentiator */,
+				95622AB02DDF37A1002FE94C /* RxDataSources */,
 			);
 			productName = WeatherApp;
 			productReference = E8AF74F82DDC8DD6009A1DA0 /* WeatherApp.app */;
@@ -230,6 +236,7 @@
 				E8AF753B2DDC9310009A1DA0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E8AF753E2DDC937C009A1DA0 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				E8AF75452DDC9390009A1DA0 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				95622AAD2DDF37A1002FE94C /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E8AF74F92DDC8DD6009A1DA0 /* Products */;
@@ -312,7 +319,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 52YSN62MCL;
+				DEVELOPMENT_TEAM = R6V7ZUXR5H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -344,7 +351,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 52YSN62MCL;
+				DEVELOPMENT_TEAM = R6V7ZUXR5H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -606,6 +613,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		95622AAD2DDF37A1002FE94C /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 		E8AF753B2DDC9310009A1DA0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -633,6 +648,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		95622AAE2DDF37A1002FE94C /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95622AAD2DDF37A1002FE94C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		95622AB02DDF37A1002FE94C /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95622AAD2DDF37A1002FE94C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
 		E8AF753C2DDC9310009A1DA0 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E8AF753B2DDC9310009A1DA0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
