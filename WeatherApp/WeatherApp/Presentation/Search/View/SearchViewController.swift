@@ -18,6 +18,7 @@ class SearchViewController: UIViewController {
     private var disposeBag = DisposeBag()
     
     deinit {
+        print("deinit SearchViewController")
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -37,21 +38,21 @@ class SearchViewController: UIViewController {
 
     private func setNavigationItem() {
         navigationItem.title = "주소 검색"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
+        // navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
     }
     
     private func bind() {
         // 우측 상단 화면 닫기 버튼
-        navigationItem.rightBarButtonItem?.rx.tap
-            .asDriver(onErrorDriveWith: .empty())
-            .drive { [weak self] _ in
-                guard let self else { return }
-                
-                print("close button tapped")
-                dismiss(animated: true)
-                onDismiss?(viewModel.output.searchCoordinatesResult.value)
-            }
-            .disposed(by: disposeBag)
+//        navigationItem.rightBarButtonItem?.rx.tap
+//            .asDriver(onErrorDriveWith: .empty())
+//            .drive { [weak self] _ in
+//                guard let self else { return }
+//                
+//                print("close button tapped")
+//                dismiss(animated: true)
+//                onDismiss?(viewModel.output.searchCoordinatesResult.value)
+//            }
+//            .disposed(by: disposeBag)
         
         // 서치 바 텍스트 필드
         searchView.searchBar.rx.text
@@ -114,10 +115,17 @@ class SearchViewController: UIViewController {
                 guard let self else { return }
                 
                 print("name: \(String(describing: $0?.name)), latitude: \(String(describing: $0?.latitude)), longitude: \(String(describing: $0?.longitude))")
-                dismiss(animated: true)
-                onDismiss?(viewModel.output.searchCoordinatesResult.value)
+                
+                popViewController()
             }
             .disposed(by: disposeBag)
+    }
+    
+    private func popViewController() {
+        onDismiss?(viewModel.output.searchCoordinatesResult.value)
+        
+        // dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     // 키보드가 나타날 때, 테이블 뷰 셀 아래쪽이 가려지는 현상 방지

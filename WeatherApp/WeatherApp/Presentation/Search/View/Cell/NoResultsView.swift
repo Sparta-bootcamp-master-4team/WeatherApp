@@ -65,6 +65,12 @@ class NoResultsView: UIView {
         }
     }
     
+    func configureUI(imageName: String, titleLabelText: String, descriptionLabelText: String) {
+        imageView.image = UIImage(systemName: imageName)
+        titleLabel.text = titleLabelText
+        descriptionLabel.text = descriptionLabelText
+    }
+    
     func update(searchText: String) {
         if searchText == "" {
             descriptionLabel.text = "검색 결과가 여기에 표시됩니다."
