@@ -22,7 +22,7 @@ final class MainViewModel {
     private let dailyWeatherRelay = BehaviorRelay<[DailyWeather]>(value: [])
     private let hourlyWeatherRelay = BehaviorRelay<[HourlyWeather]>(value: [])
     private let currentLocationRelay = BehaviorRelay<Location>(value: Location(name: "My Home", latitude: "37.440070781162675", longitude: "127.12814126170936"))
-    private let currentLocationTextRelay = BehaviorRelay<String>(value: "위치 불러오는 중...")
+    private let currentLocationTextRelay = BehaviorRelay<String>(value: "")
     private let dailyWeatherAndtemperatureRangeRelay = BehaviorRelay<DailyWeatherAndTemperatureRange?>(value: nil)
 
     var currentWeather: Driver<CurrentWeather?> {
@@ -37,9 +37,7 @@ final class MainViewModel {
     var currentTemp: Driver<String>?
     var todayMaxTemp: Driver<String>?
     var todayMinTemp: Driver<String>?
-    var currentLocationText: Driver<String>? {
-        currentLocationTextRelay.asDriver()
-    }
+    var currentLocationText: Driver<(location: String, weather: String?)>?
 
     
 
@@ -101,19 +99,18 @@ final class MainViewModel {
                 self.fetchCurrentWeatherUseCase.execute(lat: latitude, lon: longitude)
                     .subscribe(onSuccess: { [weak self] value in
                         guard let self else { return }
+                        print(value)
                         currentWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
 
                 self.fetchDailyWeatherUseCase.execute(lat: latitude, lon: longitude)
                     .subscribe(onSuccess: { [weak self] value in
-                        print(value[0])
                         guard let self else { return }
                         dailyWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
                 // 남은 일자, 시간 별 데이터도 fetch 필요
                 self.fetchHourlyWeatherUseCase.execute(lat: latitude, lon: longitude)
                     .subscribe(onSuccess: { [weak self] value in
-                        print(value)
                         guard let self else { return }
                         hourlyWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
@@ -143,6 +140,14 @@ final class MainViewModel {
                 print("최저 기온 : \(Float(min).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(min).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
+
+        currentLocationText = Observable.combineLatest(currentLocationTextRelay, currentWeatherRelay)
+            .map { location, weather in
+                guard let description = weather?.weather.first?.description else {
+                    return ("", nil)
+                }
+                return (location, description)
+            }.asDriver(onErrorJustReturn: ("", nil))
     }
 
 }
