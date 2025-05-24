@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import SnapKit
 import RxDataSources
+import Lottie
 
 class MainViewController: UIViewController {
     private let viewModel: MainViewModel
@@ -62,6 +63,12 @@ class MainViewController: UIViewController {
 
         return stackView
     }()
+
+    private var animatedWeatherView: LottieAnimationView = {
+        let lottieView = LottieAnimationView(name: "sun")
+        lottieView.loopMode = .loop
+        return lottieView
+    }() // 날씨 별로 name을 다르게 붙여 적용
 
     private let locationWeatherLabel: UILabel = {
         let label = UILabel()
@@ -125,8 +132,13 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         print("🔵 MainViewController viewWillAppear")
         viewModel.didEnterRelay.accept(())
+        animatedWeatherView.play()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        animatedWeatherView.stop()
+    }
 }
 
 private extension MainViewController {
@@ -149,7 +161,7 @@ private extension MainViewController {
     }
 
     func setHierarchy() {
-        view.addSubviews(views: dateLabel, currentTempLabel, plusButton, tempStackView, characterImageView, locationWeatherLabel, bottomStackView)
+        view.addSubviews(views: dateLabel, currentTempLabel, plusButton, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
         tempStackView.addArrangedSubviews(views: minTempLabel, maxTempLabel)
         bottomStackView.addArrangedSubviews(views: downNoticeLabel, downArrowImageView)
     }
@@ -177,15 +189,21 @@ private extension MainViewController {
             $0.size.equalTo(32)
         }
 
+        animatedWeatherView.snp.makeConstraints {
+            $0.bottom.equalTo(characterImageView.snp.top).offset(15)
+            $0.centerX.equalToSuperview()
+            $0.size.equalTo(188)
+        }
+
         locationWeatherLabel.snp.makeConstraints {
-            $0.bottom.equalTo(characterImageView.snp.top).offset(-20)
+            $0.bottom.equalTo(animatedWeatherView.snp.top).offset(-20)
             $0.centerX.equalToSuperview()
         }
 
         characterImageView.snp.makeConstraints {
-            $0.bottom.equalTo(bottomStackView.snp.top).offset(-20)
+            $0.bottom.equalTo(bottomStackView.snp.top).offset(-10)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(320)
+            $0.size.equalTo(300)
         }
 
         bottomStackView.snp.makeConstraints {
@@ -198,17 +216,46 @@ private extension MainViewController {
 
     func setBindinds() {
         viewModel.currentTemp?
-            .drive(currentTempLabel.rx.text)
+            .drive(onNext: { [weak self] value in
+                guard let self else { return }
+                self.currentTempLabel.text = value
+                self.currentTempLabel.isHidden = value.isEmpty
+            })
             .disposed(by: disposeBag)
         viewModel.todayMaxTemp?
-            .drive(maxTempLabel.rx.text)
+            .drive(onNext: { [weak self] value in
+                guard let self else { return }
+                self.maxTempLabel.text = value
+                self.maxTempLabel.isHidden = value.isEmpty
+            })
             .disposed(by: disposeBag)
         viewModel.todayMinTemp?
-            .drive(minTempLabel.rx.text)
+            .drive(onNext: { [weak self] value in
+                guard let self else { return }
+                self.minTempLabel.text = value
+                self.minTempLabel.isHidden = value.isEmpty
+            })
             .disposed(by: disposeBag)
         viewModel.currentLocationText?
-            .drive(locationWeatherLabel.rx.text)
+            .drive(onNext: { [weak self] value in
+                guard let self else { return }
+                let attributedText = NSMutableAttributedString(
+                    string: "\(value.location), ",
+                    attributes: [.font : UIFont.nanumSquare(size: 20)]
+                )
+
+                let boldText = NSAttributedString(
+                    string: value.weather ?? "",
+                    attributes: [.font : UIFont.nanumSquare(size: 20, weight: "B")]
+                )
+
+                attributedText.append(boldText)
+                self.locationWeatherLabel.attributedText = attributedText
+                self.locationWeatherLabel.isHidden = attributedText.string.isEmpty
+            })
             .disposed(by: disposeBag)
-        
+
+        // 로티 이미지 변경 시 사용
+//        animatedWeatherView.animation = LottieAnimation.named("...")
     }
 }
