@@ -67,7 +67,15 @@ final class HourlyWeatherCell: UICollectionViewCell {
     }
     
     func configure(with hourlyWeather: HourlyWeather) {
-        timeLabel.text = "\(hourlyWeather.dt)"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "a h시"
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        
+        let date = Date(timeIntervalSince1970: TimeInterval(hourlyWeather.dt))
+        let formattedTime = dateFormatter.string(from: date)
+        timeLabel.text = formattedTime
+        
         if let icon = hourlyWeather.weather.first?.icon {
             if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {
                 weatherIconImageView.kf.setImage(with: url)
