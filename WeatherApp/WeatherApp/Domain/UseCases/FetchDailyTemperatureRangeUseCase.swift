@@ -40,7 +40,7 @@ final class FetchDailyTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCase
             .map { response in
                 let dailyList = Array(response.daily.prefix(8))
                 
-                let highestMinTemp = dailyList.map { $0.temp.min }.max() ?? 0.0
+                let highestMinTemp = dailyList.map { $0.temp.min }.min() ?? 0.0
                 let highestMaxTemp = dailyList.map { $0.temp.max }.max() ?? 0.0
                 
                 return TemperatureRange(
