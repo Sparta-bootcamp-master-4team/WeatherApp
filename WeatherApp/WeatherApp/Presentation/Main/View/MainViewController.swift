@@ -13,6 +13,7 @@ import Lottie
 
 class MainViewController: UIViewController {
     private let viewModel: MainViewModel
+    private weak var coordinator: AppCoordinator?
 
     private let disposeBag = DisposeBag()
 
@@ -111,12 +112,13 @@ class MainViewController: UIViewController {
 
         return stackView
     }()
-
-    init(viewModel: MainViewModel) {
+    
+    init(viewModel: MainViewModel, coordinator: AppCoordinator) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     @available(*, unavailable, message: "storyboard is not supported.")
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented.")
@@ -253,6 +255,14 @@ private extension MainViewController {
                 self.locationWeatherLabel.attributedText = attributedText
                 self.locationWeatherLabel.isHidden = attributedText.string.isEmpty
             })
+            .disposed(by: disposeBag)
+        
+        plusButton.rx.tap
+            .bind { [weak self] in
+                guard let self else { return }
+                print("➕ plus button tapped")
+                self.coordinator?.presentSearchView(from: self, onDismiss: { _ in })
+            }
             .disposed(by: disposeBag)
 
         // 로티 이미지 변경 시 사용

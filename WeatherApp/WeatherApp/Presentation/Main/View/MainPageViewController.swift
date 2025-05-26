@@ -9,28 +9,36 @@ import UIKit
 import RxSwift
 
 class MainPageViewController: UIPageViewController {
+    private let coordinator: AppCoordinator
     private let disposeBag = DisposeBag()
     private let viewModel: PageViewModel
     private let mainViewModel: MainViewModel
     private let mainDetailViewModel: MainDetailViewModel
-
-    private lazy var mainVC = MainViewController(viewModel: self.mainViewModel)
+    
+    private lazy var mainVC = MainViewController(
+        viewModel: self.mainViewModel,
+        coordinator: self.coordinator
+    )
     private lazy var mainDetailVC = MainDetailViewController(viewModel: self.mainDetailViewModel)
     private lazy var pages: [UIViewController] = [
         mainVC, mainDetailVC
     ]
-
-    init(viewModel: PageViewModel,
-         mainViewModel: MainViewModel,
-         mainDetailViewModel: MainDetailViewModel) {
+    
+    init(
+        viewModel: PageViewModel,
+        mainViewModel: MainViewModel,
+        mainDetailViewModel: MainDetailViewModel,
+        coordinator: AppCoordinator
+    ) {
         self.viewModel = viewModel
         self.mainViewModel = mainViewModel
         self.mainDetailViewModel = mainDetailViewModel
+        self.coordinator = coordinator
         super.init(transitionStyle: .scroll, navigationOrientation: .vertical, options: nil)
         dataSource = self
         delegate = self
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented.")
     }
@@ -50,6 +58,8 @@ class MainPageViewController: UIPageViewController {
                 guard let self, index >= 0, index < self.pages.count else { return }
                 self.setViewControllers([self.pages[index]], direction: .forward, animated: true)
             }).disposed(by: disposeBag)
+        
+        mainViewModel.didEnterRelay.accept(())
     }
 
 }

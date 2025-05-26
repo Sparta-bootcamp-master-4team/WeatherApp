@@ -11,8 +11,19 @@ import RxCocoa
 
 class ListViewController: UIViewController {
     private let listView = ListView()
-    private let viewModel = ListViewModel()
+    private let viewModel: ListViewModel
+    private weak var coordinator: AppCoordinator?
     private var disposeBag = DisposeBag()
+    
+    init(viewModel: ListViewModel, coordinator: AppCoordinator) {
+        self.viewModel = viewModel
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
         print("deinit ListViewController")
@@ -54,7 +65,7 @@ class ListViewController: UIViewController {
                     _, element, cell in
                     cell.configureUI(text: element.name)
                 }
-            .disposed(by: disposeBag)
+                .disposed(by: disposeBag)
         
         // 우측 상단 관심지역 추가 버튼
         navigationItem.rightBarButtonItem?.rx.tap
@@ -102,14 +113,10 @@ class ListViewController: UIViewController {
     }
     
     private func pushSearchViewController() {
-        let viewController = SearchViewController()
-        
-        // search view에서 검색 결과를 선택하면 코어 데이터 저장
-        viewController.onDismiss = { [weak self] location in
+        coordinator?.presentSearchView(from: self) { [weak self] location in
             guard let self, let location else { return }
-            viewModel.input.accept(.saveLocation(location))
+            self.viewModel.input.accept(.saveLocation(location))
         }
-        
-        navigationController?.pushViewController(viewController, animated: true)
     }
+
 }
