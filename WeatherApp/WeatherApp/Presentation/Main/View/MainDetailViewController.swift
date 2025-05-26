@@ -47,6 +47,11 @@ class MainDetailViewController: UIViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.register(DailyWeatherCell.self, forCellWithReuseIdentifier: DailyWeatherCell.id)
         collectionView.register(HourlyWeatherCell.self, forCellWithReuseIdentifier: HourlyWeatherCell.id)
+        collectionView.register(
+            SectionHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: SectionHeaderView.id
+        )
 
         return collectionView
     }()
@@ -74,6 +79,22 @@ class MainDetailViewController: UIViewController {
                 cell.configure(with: hourlyWeather)
                 return cell
             }
+        },
+        configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+            guard let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: SectionHeaderView.id,
+                for: indexPath
+            ) as? SectionHeaderView else {
+                return UICollectionReusableView()
+            }
+            let sectionModel = dataSource.sectionModels[indexPath.section]
+            switch sectionModel {
+            case .daily(_, let header), .hourly(_, let header):
+                headerView.titleLabel.text = header
+            }
+            
+            return headerView
         }
     )
 

@@ -53,6 +53,14 @@ final class DailyWeatherCell: UICollectionViewCell {
     private let dailyTemperatureRangeStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
+        sv.spacing = 4
+        return sv
+    }()
+    
+    private let fullStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.alignment = .center
         return sv
     }()
     
@@ -83,7 +91,9 @@ final class DailyWeatherCell: UICollectionViewCell {
             weekdayLabel,
             iconAndPopStackView,
             dailyTemperatureRangeStackView
-        ].forEach { addSubview($0) }
+        ].forEach { fullStackView.addArrangedSubview($0) }
+
+        addSubview(fullStackView)
     }
     
     private func setupConstraints() {
@@ -98,7 +108,7 @@ final class DailyWeatherCell: UICollectionViewCell {
         }
         
         iconAndPopStackView.snp.makeConstraints {
-            $0.leading.equalTo(weekdayLabel.snp.trailing).offset(48)
+            $0.leading.equalTo(weekdayLabel.snp.trailing)
         }
         
         dailyTemperatureRange.snp.makeConstraints {
@@ -107,30 +117,17 @@ final class DailyWeatherCell: UICollectionViewCell {
         }
         
         dailyTemperatureRangeStackView.snp.makeConstraints {
-            $0.leading.equalTo(iconAndPopStackView.snp.trailing).offset(48)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
+        }
+        
+        fullStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
     
     func configure(dailyWeather: DailyWeather, range: TemperatureRange) {
-        let calendar = Calendar.current
-        let now = Date()
-        let today = calendar.startOfDay(for: now)
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        dateFormatter.dateFormat = "E"
-        
-        let date = Date(timeIntervalSince1970: TimeInterval(dailyWeather.dt))
-        let startOfDay = calendar.startOfDay(for: date)
-        let label: String
-        if startOfDay == calendar.startOfDay(for: today) {
-            label = "오늘"
-        } else {
-            label = dateFormatter.string(from: date)
-        }
-        weekdayLabel.text = label
+        weekdayLabel.text = Date.weekdayOrToday(from: TimeInterval(dailyWeather.dt))
         
         if let icon = dailyWeather.weather.first?.icon {
             if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {

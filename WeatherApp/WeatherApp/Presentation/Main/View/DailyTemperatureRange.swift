@@ -17,7 +17,6 @@ final class DailyTemperatureRange: UIView {
     }()
     private let barView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemBlue
         view.layer.cornerRadius = 4
         return view
     }()
@@ -84,13 +83,17 @@ final class DailyTemperatureRange: UIView {
             $0.height.equalTo(8)
         }
         
-        gradientLayer.frame = barView.bounds
-        let startColor = color(for: minTemp)
-        let endColor = color(for: maxTemp)
-        gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        gradientLayer.cornerRadius = 4
+        layoutIfNeeded()
+        
+        DispatchQueue.main.async {
+            self.gradientLayer.frame = self.barView.bounds
+            let startColor = self.color(for: self.minTemp)
+            let endColor = self.color(for: self.maxTemp)
+            self.gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+            self.gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+            self.gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+            self.gradientLayer.cornerRadius = 4
+        }
     }
     
     func color(for temperature: CGFloat) -> UIColor {

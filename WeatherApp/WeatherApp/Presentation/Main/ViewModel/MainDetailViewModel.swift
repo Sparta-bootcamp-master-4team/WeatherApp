@@ -20,10 +20,10 @@ final class MainDetailViewModel {
         self.sections = Observable.combineLatest(hourlyWeatherObservable, dailyWeatherAndTemperatureRangeObservable)
             .map({ hourly, dailyAndRange in
                 return [
-                    .hourly(items: hourly.map { .hourlyWeatherItem($0) }),
+                    .hourly(items: hourly.map { .hourlyWeatherItem($0) }, header: "시간별 날씨"),
                     .daily(items: dailyAndRange?.dailyWeather.map { _ in
                         return .dailyWeatherListItem(DailyWeatherAndTemperatureRange(dailyWeather: dailyAndRange?.dailyWeather ?? [], temperatureRange: dailyAndRange?.temperatureRange ?? TemperatureRange(highestMinTemp: 0, highestMaxTemp: 0)))
-                    } ?? [] )
+                    } ?? [], header: "요일별 날씨" )
                 ]
             })
 
