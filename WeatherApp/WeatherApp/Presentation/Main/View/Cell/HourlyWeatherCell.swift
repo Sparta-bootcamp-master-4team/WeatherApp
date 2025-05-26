@@ -57,6 +57,7 @@ final class HourlyWeatherCell: UICollectionViewCell {
         
         weatherIconImageView.snp.makeConstraints {
             $0.top.equalTo(timeLabel.snp.bottom)
+            $0.width.height.equalTo(40)
             $0.centerX.equalToSuperview()
         }
         
