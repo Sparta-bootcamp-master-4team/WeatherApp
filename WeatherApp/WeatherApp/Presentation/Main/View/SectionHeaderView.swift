@@ -11,7 +11,7 @@ import SnapKit
 final class SectionHeaderView: UICollectionReusableView {
     static let id = "SectionHeaderView"
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .bold)
         return label
