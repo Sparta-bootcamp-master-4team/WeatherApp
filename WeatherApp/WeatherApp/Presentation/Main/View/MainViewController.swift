@@ -130,15 +130,14 @@ class MainViewController: UIViewController {
         configure() // 한번 애니메이션 아이콘을 올리고 play를 해도 그 이후 업데이트 될 일이 있으면 play를 안하지 않나 테스트해봐야됨.
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.didEnterRelay.accept(())
-        animatedWeatherView.play()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         animatedWeatherView.stop()
+    }
+
+    func refresh() {
+        viewModel.didEnterRelay.accept(())
+        animatedWeatherView.play()
     }
 }
 
@@ -153,8 +152,9 @@ private extension MainViewController {
     func setStyle() {
         view.backgroundColor = .systemBackground
         navigationController?.setNavigationBarHidden(true, animated: false) // 시스템이 navigationBar를 자동으로 보이도록 리셋하는 경우가 존재하기에
-        // TODO: - 데이터 바인딩 될 시 해당 임시 데이터 삭제
-        dateLabel.text = "오늘 5월 21일"
+
+        viewModel.didEnterRelay.accept(())
+        animatedWeatherView.play()
     }
 
     func setHierarchy() {
@@ -166,7 +166,7 @@ private extension MainViewController {
     func setConstraints() {
         dateLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(28)
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(8)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
 
         currentTempLabel.snp.makeConstraints {
@@ -204,7 +204,7 @@ private extension MainViewController {
         }
 
         bottomStackView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(140)
             $0.height.equalTo(40)

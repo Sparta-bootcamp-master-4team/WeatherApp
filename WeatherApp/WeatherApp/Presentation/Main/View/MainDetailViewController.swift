@@ -136,7 +136,7 @@ private extension MainDetailViewController {
 
     func setConstraints() {
         topStackView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(12)
+            $0.top.equalToSuperview()
             $0.centerX.equalToSuperview()
             $0.width.equalTo(140)
             $0.height.equalTo(40)

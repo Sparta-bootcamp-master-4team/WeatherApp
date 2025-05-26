@@ -6,24 +6,15 @@
 //
 
 import UIKit
-import RxSwift
 
-class MainPageViewController: UIPageViewController {
-    private let coordinator: AppCoordinator
-    private let disposeBag = DisposeBag()
-    private let viewModel: PageViewModel
+class MainPageViewController: UIViewController {
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let mainViewModel: MainViewModel
     private let mainDetailViewModel: MainDetailViewModel
-    
-    private lazy var mainVC = MainViewController(
-        viewModel: self.mainViewModel,
-        coordinator: self.coordinator
-    )
+    private let viewModel: PageViewModel
+    private let coordinator: AppCoordinator
     private lazy var mainDetailVC = MainDetailViewController(viewModel: self.mainDetailViewModel)
-    private lazy var pages: [UIViewController] = [
-        mainVC, mainDetailVC
-    ]
-    
     init(
         viewModel: PageViewModel,
         mainViewModel: MainViewModel,
@@ -34,9 +25,10 @@ class MainPageViewController: UIPageViewController {
         self.mainViewModel = mainViewModel
         self.mainDetailViewModel = mainDetailViewModel
         self.coordinator = coordinator
-        super.init(transitionStyle: .scroll, navigationOrientation: .vertical, options: nil)
-        dataSource = self
-        delegate = self
+        super.init(nibName: nil, bundle: nil)
+    private lazy var mainVC = MainViewController(
+        viewModel: self.mainViewModel,
+        coordinator: self.coordinator
     }
     
     required init?(coder: NSCoder) {
@@ -46,43 +38,70 @@ class MainPageViewController: UIPageViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
-
-        setViewControllers([pages[0]], direction: .forward, animated: false)
-        print("🟣 setViewControllers 호출됨")
-
-        viewModel.currentPage
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] index in
-                guard let self, index >= 0, index < self.pages.count else { return }
-                self.setViewControllers([self.pages[index]], direction: .forward, animated: true)
-            }).disposed(by: disposeBag)
-        
-        mainViewModel.didEnterRelay.accept(())
+        configure()
     }
 
 }
 
-extension MainPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index > 0 else { return nil }
-        return pages[index - 1]
+private extension MainPageViewController {
+    func configure() {
+        setStyle()
+        setHierarchy()
+        setConstraints()
+        setActions()
     }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index < pages.count - 1 else { return nil }
-        return pages[index + 1]
+
+    func setStyle() {
+        view.backgroundColor = .systemBackground
+        scrollView.isPagingEnabled = true
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        scrollView.refreshControl = refreshControl
     }
-    
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            didFinishAnimating finished: Bool,
-                            previousViewControllers: [UIViewController],
-                            transitionCompleted completed: Bool) {
-        if completed,
-           let visible = viewControllers?.first,
-           let index = pages.firstIndex(of: visible) {
-            viewModel.currentPage.accept(index)
+
+    func setHierarchy() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+
+        [mainVC, mainDetailVC].forEach {
+            addChild($0)
+            $0.didMove(toParent: self)
+        }
+        contentView.addSubviews(views: mainVC.view, mainDetailVC.view)
+    }
+
+    func setConstraints() {
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.directionalHorizontalEdges.bottom.equalToSuperview()
+        }
+
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.equalTo(scrollView.snp.height).multipliedBy(2)
+        }
+
+        mainVC.view.snp.makeConstraints {
+            $0.top.directionalHorizontalEdges.equalToSuperview()
+            $0.height.equalTo(scrollView.snp.height)
+        }
+
+        mainDetailVC.view.snp.makeConstraints {
+            $0.top.equalTo(mainVC.view.snp.bottom)
+            $0.directionalHorizontalEdges.bottom.equalToSuperview()
+            $0.height.equalTo(scrollView.snp.height)
+        }
+    }
+
+    func setActions() {
+        refreshControl.addTarget(self, action: #selector(handleRefreshView), for: .valueChanged)
+    }
+
+    @objc func handleRefreshView() {
+        mainVC.refresh()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.scrollView.refreshControl?.endRefreshing()
         }
     }
 }
