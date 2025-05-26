@@ -54,7 +54,7 @@ enum Section {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 8
-        section.contentInsets = .init(top: 12, leading: 8, bottom: 28, trailing: 8)
+        section.contentInsets = .init(top: 8, leading: 10, bottom: 48, trailing: 10)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -85,8 +85,7 @@ enum Section {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 8
-        section.contentInsets = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
+        section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

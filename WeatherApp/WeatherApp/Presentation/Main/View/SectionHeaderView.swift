@@ -17,13 +17,29 @@ final class SectionHeaderView: UICollectionReusableView {
         return label
     }()
     
+    private let bottomLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .separator
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(titleLabel)
+        [
+            titleLabel,
+            bottomLine
+        ].forEach { addSubview($0) }
         
         titleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(10)
+        }
+        
+        bottomLine.snp.makeConstraints {
+            $0.height.equalTo(1)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
     }
     

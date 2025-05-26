@@ -13,7 +13,7 @@ final class DailyWeatherCell: UICollectionViewCell {
     
     private let weekdayLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     
@@ -100,7 +100,7 @@ final class DailyWeatherCell: UICollectionViewCell {
         weekdayLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.centerY.equalToSuperview()
-            $0.width.equalTo(24)
+            $0.width.equalTo(28)
         }
         
         weatherIconImageView.snp.makeConstraints {
