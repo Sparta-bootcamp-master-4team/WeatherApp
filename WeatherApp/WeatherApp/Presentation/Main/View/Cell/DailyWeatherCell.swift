@@ -53,6 +53,14 @@ final class DailyWeatherCell: UICollectionViewCell {
     private let dailyTemperatureRangeStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
+        sv.spacing = 4
+        return sv
+    }()
+    
+    private let fullStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.alignment = .center
         return sv
     }()
     
@@ -83,7 +91,9 @@ final class DailyWeatherCell: UICollectionViewCell {
             weekdayLabel,
             iconAndPopStackView,
             dailyTemperatureRangeStackView
-        ].forEach { addSubview($0) }
+        ].forEach { fullStackView.addArrangedSubview($0) }
+
+        addSubview(fullStackView)
     }
     
     private func setupConstraints() {
@@ -98,7 +108,7 @@ final class DailyWeatherCell: UICollectionViewCell {
         }
         
         iconAndPopStackView.snp.makeConstraints {
-            $0.leading.equalTo(weekdayLabel.snp.trailing).offset(48)
+            $0.leading.equalTo(weekdayLabel.snp.trailing)
         }
         
         dailyTemperatureRange.snp.makeConstraints {
@@ -107,8 +117,12 @@ final class DailyWeatherCell: UICollectionViewCell {
         }
         
         dailyTemperatureRangeStackView.snp.makeConstraints {
-            $0.leading.equalTo(iconAndPopStackView.snp.trailing).offset(48)
+            $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
+        }
+        
+        fullStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
     
