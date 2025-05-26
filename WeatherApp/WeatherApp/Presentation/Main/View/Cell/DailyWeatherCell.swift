@@ -113,8 +113,25 @@ final class DailyWeatherCell: UICollectionViewCell {
     }
     
     func configure(dailyWeather: DailyWeather, range: TemperatureRange) {
-        print("dailyWeather: \(dailyWeather)")
-        weekdayLabel.text = "\(dailyWeather.dt)"
+        let calendar = Calendar.current
+        let now = Date()
+        let today = calendar.startOfDay(for: now)
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        dateFormatter.dateFormat = "E"
+        
+        let date = Date(timeIntervalSince1970: TimeInterval(dailyWeather.dt))
+        let startOfDay = calendar.startOfDay(for: date)
+        let label: String
+        if startOfDay == calendar.startOfDay(for: today) {
+            label = "오늘"
+        } else {
+            label = dateFormatter.string(from: date)
+        }
+        weekdayLabel.text = label
+        
         if let icon = dailyWeather.weather.first?.icon {
             if let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png") {
                 weatherIconImageView.kf.setImage(with: url)
