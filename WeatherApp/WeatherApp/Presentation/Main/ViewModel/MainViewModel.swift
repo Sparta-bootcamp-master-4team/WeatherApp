@@ -5,6 +5,7 @@
 //  Created by 양원식 on 5/20/25.
 //
 
+import Foundation
 import RxSwift
 import RxCocoa
 
@@ -24,6 +25,7 @@ final class MainViewModel {
     private let currentLocationRelay = BehaviorRelay<Location>(value: Location(name: "My Home", latitude: "37.440070781162675", longitude: "127.12814126170936"))
     private let currentLocationTextRelay = BehaviorRelay<String>(value: "")
     private let dailyWeatherAndtemperatureRangeRelay = BehaviorRelay<DailyWeatherAndTemperatureRange?>(value: nil)
+    private let weatherConditionRelay = BehaviorRelay<Int>(value: 800)
 
     var currentWeather: Driver<CurrentWeather?> {
         currentWeatherRelay.asDriver()
@@ -38,8 +40,9 @@ final class MainViewModel {
     var todayMaxTemp: Driver<String>?
     var todayMinTemp: Driver<String>?
     var currentLocationText: Driver<(location: String, weather: String?)>?
+    var weatherCondition: Driver<WeatherCondition>?
+    var currentDate: Driver<String>?
 
-    
 
     // MARK: - View -> ViewModel
     let didEnterRelay = PublishRelay<Void>()
@@ -92,14 +95,15 @@ final class MainViewModel {
                 self.reverseGeocodingUseCase.getAddressFromCoordinates(x: longitude, y: latitude)
                     .subscribe(onSuccess: { [weak self] value in
                         guard let self else { return }
-                        print(value)
                         currentLocationTextRelay.accept(value)
                     }).disposed(by: disposeBag)
 
                 self.fetchCurrentWeatherUseCase.execute(lat: latitude, lon: longitude)
                     .subscribe(onSuccess: { [weak self] value in
-                        guard let self else { return }
-                        print(value)
+                        guard let self,
+                              let weather = value.weather.first else { return }
+                        print("\(value)\n\n\(value.weather.first?.id)")
+                        weatherConditionRelay.accept(weather.id)
                         currentWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
 
@@ -140,7 +144,6 @@ final class MainViewModel {
                 print("최저 기온 : \(Float(min).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(min).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
-
         currentLocationText = Observable.combineLatest(currentLocationTextRelay, currentWeatherRelay)
             .map { location, weather in
                 guard let description = weather?.weather.first?.description else {
@@ -148,6 +151,20 @@ final class MainViewModel {
                 }
                 return (location, description)
             }.asDriver(onErrorJustReturn: ("", nil))
+        weatherCondition = weatherConditionRelay
+            .map {
+                WeatherCondition.init(from: $0)
+            }
+            .asDriver(onErrorJustReturn: .clear)
+        currentDate = currentWeatherRelay
+            .map { value in
+                guard let value else { return "" }
+                let dt = TimeInterval(value.dt)
+                let monthDay = Date.formattedMonthDay(from: dt)
+                let weekdayOrToday = Date.weekdayOrToday(from: dt)
+                return "\(weekdayOrToday) \(monthDay)"
+            }
+            .asDriver(onErrorJustReturn: "")
     }
 
 }
