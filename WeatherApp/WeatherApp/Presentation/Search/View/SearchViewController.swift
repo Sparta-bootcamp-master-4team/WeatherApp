@@ -129,7 +129,7 @@ class SearchViewController: UIViewController {
                 print("LocationViewModel로 넘길 값: \(location)")
                 
                 self.coordinator?.pushLocationPageView(from: self, location: location)
-                popViewController()
+//                popViewController()
             }
             .disposed(by: disposeBag)
     }
