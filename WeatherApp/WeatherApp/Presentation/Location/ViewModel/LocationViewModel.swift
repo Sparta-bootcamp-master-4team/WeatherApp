@@ -15,6 +15,7 @@ final class LocationViewModel {
     private let fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCaseProtocol
     private let reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol
     private let getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol
+    private let saveLocationUseCase: SaveLocationUseCaseProtocol
 
     private let disposeBag = DisposeBag()
     private let selectedLocation: Location
@@ -25,6 +26,8 @@ final class LocationViewModel {
     private let currentLocationTextRelay = BehaviorRelay<String>(value: "")
     private let dailyWeatherAndTemperatureRangeRelay = BehaviorRelay<DailyWeatherAndTemperatureRange?>(value: nil)
     private let weatherConditionRelay = BehaviorRelay<Int>(value: 800)
+    let saveLocationTrigger = PublishRelay<Void>()
+    let saveResult = PublishRelay<Result<Void, Error>>()
 
     var currentWeather: Driver<CurrentWeather?> {
         currentWeatherRelay.asDriver()
@@ -53,7 +56,8 @@ final class LocationViewModel {
         fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCaseProtocol,
         fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCaseProtocol,
         reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol,
-        getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol
+        getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol,
+        saveLocationUseCase: SaveLocationUseCaseProtocol
     ) {
         self.selectedLocation = location
         self.fetchDailyWeatherUseCase = fetchDailyWeatherUseCase
@@ -61,6 +65,7 @@ final class LocationViewModel {
         self.fetchCurrentWeatherUseCase = fetchCurrentWeatherUseCase
         self.reverseGeocodingUseCase = reverseGeocodingUseCase
         self.getDailyWeatherAndTemperatureRangeUseCase = getDailyWeatherAndTemperatureRangeUseCase
+        self.saveLocationUseCase = saveLocationUseCase
 
         bind()
     }
@@ -114,6 +119,20 @@ final class LocationViewModel {
                 return "\(weekdayOrToday) \(monthDay)"
             }
             .asDriver(onErrorJustReturn: "")
+        
+        saveLocationTrigger
+            .flatMapLatest { [weak self] _ -> Observable<Result<Void, Error>> in
+                guard let self else { return .empty() }
+
+                return self.saveLocationUseCase.execute(self.selectedLocation)
+                    .andThen(Single.just(Result<Void, Error>.success(())))
+                    .asObservable()
+                    .catch { error in
+                        Observable.just(.failure(error))
+                    }
+            }
+            .bind(to: saveResult)
+            .disposed(by: disposeBag)
     }
 
     private func fetchWeather() {

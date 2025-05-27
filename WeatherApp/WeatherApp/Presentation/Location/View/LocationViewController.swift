@@ -13,6 +13,7 @@ import Lottie
 final class LocationViewController: UIViewController {
     private let viewModel: LocationViewModel
     private let disposeBag = DisposeBag()
+    private weak var coordinator: AppCoordinator?
     
     private let backButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -30,8 +31,9 @@ final class LocationViewController: UIViewController {
     
     private let saveButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "heart"), for: .normal)
-        button.tintColor = .label
+        button.setTitle("추가", for: .normal)
+        button.titleLabel?.font = .nanumSquare(size: 16)
+        button.setTitleColor(.label, for: .normal)
         return button
     }()
 
@@ -106,8 +108,9 @@ final class LocationViewController: UIViewController {
         return stack
     }()
 
-    init(viewModel: LocationViewModel) {
+    init(viewModel: LocationViewModel, coordinator: AppCoordinator) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -212,6 +215,10 @@ private extension LocationViewController {
             }
             .disposed(by: disposeBag)
         
+        saveButton.rx.tap
+            .bind(to: viewModel.saveLocationTrigger)
+            .disposed(by: disposeBag)
+        
         viewModel.currentTemp?
             .drive(onNext: { [weak self] value in
                 guard let self else { return }
@@ -270,6 +277,18 @@ private extension LocationViewController {
                 guard let self else { return }
                 self.dateLabel.text = value
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.saveResult
+            .bind { [weak self] result in
+                switch result {
+                case .success:
+                    self?.coordinator?.replaceRootWithListView()
+                case .failure(let error):
+                    print("저장 실패: \(error.localizedDescription)")
+                    self?.showAlert(title: "실패", message: "위치 저장 실패")
+                }
+            }
             .disposed(by: disposeBag)
     }
 }
