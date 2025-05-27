@@ -14,7 +14,7 @@ final class HourlyWeatherCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .nanumSquare(size: 12)
         return label
     }()
     
@@ -26,7 +26,7 @@ final class HourlyWeatherCell: UICollectionViewCell {
     
     private let temperatureLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .nanumSquare(size: 14, weight: "B")
         return label
     }()
     

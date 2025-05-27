@@ -144,7 +144,7 @@ private extension MainDetailViewController {
 
         detailCollectionView.snp.makeConstraints {
             $0.top.equalTo(topStackView.snp.bottom).offset(20)
-            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.directionalHorizontalEdges.equalToSuperview().inset(20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
