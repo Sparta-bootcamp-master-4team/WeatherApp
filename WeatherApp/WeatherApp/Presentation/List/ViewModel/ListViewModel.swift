@@ -20,14 +20,16 @@ final class ListViewModel: ViewModelProtocol {
     
     struct Output {
         var lists = BehaviorRelay<[Location]>(value: [])
+        var selectedLocation: Observable<Location>
     }
     
     var input = PublishRelay<Input>()
-    var output = Output()
+    var output: Output
     
     private let fetchLocationsUseCase: FetchLocationsUseCase
     private let deleteLocationUseCase: DeleteLocationUseCase
     private let saveLocationUseCase: SaveLocationUseCase
+    private let selectedLocationRelay = PublishRelay<Location>()
     var disposeBag = DisposeBag()
     
     init(
@@ -38,6 +40,10 @@ final class ListViewModel: ViewModelProtocol {
         self.fetchLocationsUseCase = fetchLocationsUseCase
         self.deleteLocationUseCase = deleteLocationUseCase
         self.saveLocationUseCase = saveLocationUseCase
+        
+        self.output = Output(
+            selectedLocation: selectedLocationRelay.asObservable()
+        )
         
         bindInput()
     }
@@ -63,6 +69,7 @@ final class ListViewModel: ViewModelProtocol {
                 case .didSelectTableViewCell(let dong):
                     print("did Select TableViewCell")
                     print("name: \(String(describing: dong.name)), latitude: \(String(describing: dong.latitude)), longitude: \(String(describing: dong.longitude))")
+                    selectedLocationRelay.accept(dong)
                 // 테이블 뷰 셀 삭제: 해당 데이터 2군데 삭제(뷰 모델 자체 변수, 코어 데이터)
                 case .didDeleteTableViewCell(let dong):
                     print("did Delete TableViewCell")
