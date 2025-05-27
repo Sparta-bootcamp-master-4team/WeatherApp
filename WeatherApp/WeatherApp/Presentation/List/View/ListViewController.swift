@@ -49,6 +49,7 @@ class ListViewController: UIViewController {
     
     private func setNavigationItem() {
         navigationItem.title = "관심 지역"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: nil)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil)
         
         navigationItem.backButtonTitle = ""
@@ -66,6 +67,16 @@ class ListViewController: UIViewController {
                     cell.configureUI(text: element.name)
                 }
                 .disposed(by: disposeBag)
+        
+        // 좌측 상단 뒤로 가기 버튼(현재 위치 날씨 화면으로)
+        navigationItem.leftBarButtonItem?.rx.tap
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] _ in
+                guard let self else { return }
+                
+                print("back button tapped")
+            }
+            .disposed(by: disposeBag)
         
         // 우측 상단 관심지역 추가 버튼
         navigationItem.rightBarButtonItem?.rx.tap

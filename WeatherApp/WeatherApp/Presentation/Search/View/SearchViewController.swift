@@ -68,6 +68,7 @@ class SearchViewController: UIViewController {
             .orEmpty
             .asDriver(onErrorDriveWith: .empty())
             .skip(1)
+            .debounce(.milliseconds(300))
             .drive { [weak self] in
                 self?.viewModel.input.accept(.searchTextChanged($0))
             }
