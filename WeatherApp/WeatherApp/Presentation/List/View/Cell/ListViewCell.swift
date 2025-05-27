@@ -23,7 +23,7 @@ class ListViewCell: UITableViewCell {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .light)
+        label.font = .nanumSquare(size: 18, weight: "R")
         label.textColor = .label
         return label
     }()
