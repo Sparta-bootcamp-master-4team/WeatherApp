@@ -25,9 +25,10 @@ class MainViewController: UIViewController {
         return label
     }()
 
-    private let plusButton: UIButton = {
+    private let listButton: UIButton = {
         let button = UIButton()
-        button.setImage(.init(systemName: "plus"), for: .normal)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 20)
+        button.setImage(.init(systemName: "list.bullet", withConfiguration: configuration), for: .normal)
         button.tintColor = .label
 
         return button
@@ -75,6 +76,7 @@ class MainViewController: UIViewController {
         let label = UILabel()
         label.textColor = .label
         label.font = .nanumSquare(size: 20)
+        label.numberOfLines = 2
 
         return label
     }()
@@ -158,7 +160,7 @@ private extension MainViewController {
     }
 
     func setHierarchy() {
-        view.addSubviews(views: dateLabel, currentTempLabel, plusButton, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
+        view.addSubviews(views: dateLabel, currentTempLabel, listButton, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
         tempStackView.addArrangedSubviews(views: minTempLabel, maxTempLabel)
         bottomStackView.addArrangedSubviews(views: downNoticeLabel, downArrowImageView)
     }
@@ -180,7 +182,7 @@ private extension MainViewController {
             $0.height.equalTo(28)
         }
 
-        plusButton.snp.makeConstraints {
+        listButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.centerY.equalTo(dateLabel.snp.centerY)
             $0.size.equalTo(32)
@@ -189,18 +191,18 @@ private extension MainViewController {
         animatedWeatherView.snp.makeConstraints {
             $0.bottom.equalTo(characterImageView.snp.top).offset(15)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(188)
+            $0.size.equalTo(160)
         }
 
         locationWeatherLabel.snp.makeConstraints {
-            $0.bottom.equalTo(animatedWeatherView.snp.top).offset(-20)
+            $0.bottom.equalTo(animatedWeatherView.snp.top).offset(-12)
             $0.centerX.equalToSuperview()
         }
 
         characterImageView.snp.makeConstraints {
             $0.bottom.equalTo(bottomStackView.snp.top).offset(-10)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(300)
+            $0.size.equalTo(280)
         }
 
         bottomStackView.snp.makeConstraints {
@@ -236,14 +238,25 @@ private extension MainViewController {
         viewModel.currentLocationText?
             .drive(onNext: { [weak self] value in
                 guard let self else { return }
+
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = 6
+                paragraphStyle.alignment = .center
+
                 let attributedText = NSMutableAttributedString(
-                    string: "\(value.location), ",
-                    attributes: [.font : UIFont.nanumSquare(size: 20)]
+                    string: "\(value.location)은(는)\n",
+                    attributes: [
+                        .font : UIFont.nanumSquare(size: 20),
+                        .paragraphStyle: paragraphStyle
+                    ]
                 )
 
                 let boldText = NSAttributedString(
                     string: value.weather ?? "",
-                    attributes: [.font : UIFont.nanumSquare(size: 20, weight: "B")]
+                    attributes: [
+                        .font : UIFont.nanumSquare(size: 20, weight: "B"),
+                        .paragraphStyle: paragraphStyle
+                    ]
                 )
 
                 attributedText.append(boldText)
@@ -267,15 +280,11 @@ private extension MainViewController {
             })
             .disposed(by: disposeBag)
         
-        plusButton.rx.tap
+        listButton.rx.tap
             .bind { [weak self] in
                 guard let self else { return }
-                print("➕ plus button tapped")
                 self.coordinator?.replaceRootWithListView()
             }
             .disposed(by: disposeBag)
-
-        // 로티 이미지 변경 시 사용
-//        animatedWeatherView.animation = LottieAnimation.named("...")
     }
 }
