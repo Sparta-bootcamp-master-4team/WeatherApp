@@ -20,7 +20,7 @@ class NoResultsView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "검색 결과 없음"
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .nanumSquare(size: 17, weight: "B")
         label.textColor = .label
         return label
     }()
@@ -28,7 +28,7 @@ class NoResultsView: UIView {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "검색 결과가 여기에 표시됩니다."
-        label.font = .systemFont(ofSize: 14)
+        label.font = .nanumSquare(size: 14)
         label.textColor = .secondaryLabel
         return label
     }()

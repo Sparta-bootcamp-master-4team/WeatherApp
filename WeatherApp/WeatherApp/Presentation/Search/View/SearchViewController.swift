@@ -53,18 +53,6 @@ class SearchViewController: UIViewController {
     }
     
     private func bind() {
-        // 우측 상단 화면 닫기 버튼
-//        navigationItem.rightBarButtonItem?.rx.tap
-//            .asDriver(onErrorDriveWith: .empty())
-//            .drive { [weak self] _ in
-//                guard let self else { return }
-//                
-//                print("close button tapped")
-//                dismiss(animated: true)
-//                onDismiss?(viewModel.output.searchCoordinatesResult.value)
-//            }
-//            .disposed(by: disposeBag)
-        
         // 서치 바 텍스트 필드
         searchView.searchBar.rx.text
             .orEmpty

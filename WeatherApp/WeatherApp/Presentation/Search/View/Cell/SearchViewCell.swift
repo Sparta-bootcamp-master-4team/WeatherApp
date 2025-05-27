@@ -12,7 +12,7 @@ class SearchViewCell: UITableViewCell {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .nanumSquare(size: 17, weight: "B")
         label.textColor = .secondaryLabel
         return label
     }()

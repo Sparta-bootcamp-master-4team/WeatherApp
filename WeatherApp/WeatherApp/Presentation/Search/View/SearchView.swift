@@ -12,6 +12,7 @@ class SearchView: UIView {
     let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.searchBarStyle = .minimal
+        searchBar.searchTextField.font = .nanumSquare(size: 16)
         return searchBar
     }()
     
