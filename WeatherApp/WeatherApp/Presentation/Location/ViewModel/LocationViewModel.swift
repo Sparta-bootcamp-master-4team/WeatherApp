@@ -123,11 +123,7 @@ final class LocationViewModel {
             return
         }
 
-        reverseGeocodingUseCase.getAddressFromCoordinates(x: lon, y: lat)
-            .subscribe(onSuccess: { [weak self] address in
-                self?.currentLocationTextRelay.accept(address)
-            })
-            .disposed(by: disposeBag)
+        self.currentLocationTextRelay.accept(self.selectedLocation.name)
 
         fetchCurrentWeatherUseCase.execute(lat: lat, lon: lon)
             .subscribe(onSuccess: { [weak self] weather in
