@@ -120,13 +120,10 @@ class SearchViewController: UIViewController {
         viewModel.output.searchCoordinatesResult
             .asDriver(onErrorDriveWith: .empty())
             .skip(1)
-            .drive { [weak self] in
-                guard let self else { return }
-                
-                print("name: \(String(describing: $0?.name)), latitude: \(String(describing: $0?.latitude)), longitude: \(String(describing: $0?.longitude))")
-                
-                
-                //popViewController()
+            .drive { [weak self] location in
+                guard let self, let location else { return }
+
+                print("LocationViewModel로 넘길 값: \(location)")
             }
             .disposed(by: disposeBag)
     }
