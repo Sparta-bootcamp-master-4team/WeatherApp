@@ -23,7 +23,26 @@ final class AppCoordinator: Coordinator {
     }
     
     func presentSearchView(from viewController: UIViewController, onDismiss: @escaping (Location?) -> Void) {
-        let searchVC = container.searchViewControllerFactory.makeSearchViewController(onDismiss: onDismiss)
+        let searchVC = container.searchViewControllerFactory.makeSearchViewController(
+            coordinator: self,
+            onDismiss: onDismiss
+        )
         viewController.navigationController?.pushViewController(searchVC, animated: true)
     }
+    
+    func replaceRootWithListView() {
+        let listVC = container.listViewControllerFactory.makeListViewController(coordinator: self)
+        let nav = UINavigationController(rootViewController: listVC)
+        window.rootViewController = nav
+        window.makeKeyAndVisible()
+    }
+    
+    func pushLocationPageView(from: UIViewController, location: Location) {
+        let locationPageVC = container.locationViewControllerFactory.makeLocationPageViewController(
+            coordinator: self,
+            location: location
+        )
+        from.navigationController?.pushViewController(locationPageVC, animated: true)
+    }
+    
 }

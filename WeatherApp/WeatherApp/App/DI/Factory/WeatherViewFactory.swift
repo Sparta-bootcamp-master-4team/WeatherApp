@@ -10,7 +10,7 @@ final class WeatherViewModelFactory {
         let repo = WeatherRepositoryImpl()
         let locationRepo = LocationRepository(locationService: LocationService())
         let reverseRepo = ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService())
-
+        
         let daily = FetchDailyWeatherUseCase(repository: repo)
         let hourly = FetchHourlyWeatherUseCase(repository: repo)
         let current = FetchCurrentWeatherUseCase(repository: repo)
@@ -20,7 +20,7 @@ final class WeatherViewModelFactory {
             fetchDailyWeatherUseCase: daily,
             fetchTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCase(repository: repo)
         )
-
+        
         return MainViewModel(
             fetchDailyWeatherUseCase: daily,
             fetchHourlyWeatherUseCase: hourly,
@@ -30,15 +30,40 @@ final class WeatherViewModelFactory {
             getDailyWeatherAndTemperatureRangeUseCase: dailyAndRange
         )
     }
-
+    
     func makeMainDetailViewModel(mainVM: MainViewModel) -> MainDetailViewModel {
         return MainDetailViewModel(
             hourlyWeatherObservable: mainVM.hourlyWeather,
             dailyWeatherAndTemperatureRangeObservable: mainVM.dailyWeatherAndTemperatureRange
         )
     }
-
+    
     func makePageViewModel() -> PageViewModel {
         return PageViewModel()
     }
+    
+    func makeLocationViewModel(location: Location) -> LocationViewModel {
+        let repo = WeatherRepositoryImpl()
+        let reverseRepo = ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService())
+        
+        return LocationViewModel(
+            location: location,
+            fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: repo),
+            fetchHourlyWeatherUseCase: FetchHourlyWeatherUseCase(repository: repo),
+            fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCase(repository: repo),
+            reverseGeocodingUseCase: ReverseGeocodingUseCase(repository: reverseRepo),
+            getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperaturnRangeUseCase(
+                fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: repo),
+                fetchTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCase(repository: repo)
+            )
+        )
+    }
+    
+    func makeLocationDetailViewModel(mainVM: LocationViewModel) -> LocationDetailViewModel {
+        return LocationDetailViewModel(
+            hourlyWeatherObservable: mainVM.hourlyWeather,
+            dailyWeatherAndTemperatureRangeObservable: mainVM.dailyWeatherAndTemperatureRange
+        )
+    }
+    
 }
