@@ -13,12 +13,26 @@ import Lottie
 final class LocationViewController: UIViewController {
     private let viewModel: LocationViewModel
     private let disposeBag = DisposeBag()
+    
+    private let backButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.tintColor = .label
+        return button
+    }()
 
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.font = .nanumSquare(size: 20)
         return label
+    }()
+    
+    private let saveButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = .label
+        return button
     }()
 
     private let currentTempLabel: UILabel = {
@@ -134,14 +148,24 @@ private extension LocationViewController {
     }
 
     func setHierarchy() {
-        view.addSubviews(views: dateLabel, currentTempLabel, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
+        view.addSubviews(views: backButton, dateLabel, saveButton, currentTempLabel, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
         tempStackView.addArrangedSubviews(views: minTempLabel, maxTempLabel)
         bottomStackView.addArrangedSubviews(views: downNoticeLabel, downArrowImageView)
     }
 
     func setConstraints() {
-        dateLabel.snp.makeConstraints {
+        backButton.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(28)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
+        }
+        
+        dateLabel.snp.makeConstraints {
+            $0.leading.equalTo(backButton.snp.trailing).offset(8)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
+        }
+        
+        saveButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(28)
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
 
