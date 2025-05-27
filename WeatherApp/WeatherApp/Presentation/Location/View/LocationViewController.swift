@@ -206,6 +206,12 @@ private extension LocationViewController {
     }
 
     func setBindings() {
+        backButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
         viewModel.currentTemp?
             .drive(onNext: { [weak self] value in
                 guard let self else { return }
