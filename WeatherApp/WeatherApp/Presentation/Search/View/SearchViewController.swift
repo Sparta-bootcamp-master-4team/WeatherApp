@@ -14,8 +14,17 @@ class SearchViewController: UIViewController {
     
     private let searchView = SearchView()
     private let noResultsView = NoResultsView()
-    private let viewModel = SearchViewModel()
+    private let viewModel: SearchViewModel
     private var disposeBag = DisposeBag()
+    
+    init(viewModel: SearchViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
         print("deinit SearchViewController")
@@ -116,7 +125,8 @@ class SearchViewController: UIViewController {
                 
                 print("name: \(String(describing: $0?.name)), latitude: \(String(describing: $0?.latitude)), longitude: \(String(describing: $0?.longitude))")
                 
-                popViewController()
+                
+                //popViewController()
             }
             .disposed(by: disposeBag)
     }
