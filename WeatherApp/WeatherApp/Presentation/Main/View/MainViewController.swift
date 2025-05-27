@@ -271,7 +271,7 @@ private extension MainViewController {
             .bind { [weak self] in
                 guard let self else { return }
                 print("➕ plus button tapped")
-                self.coordinator?.presentSearchView(from: self, onDismiss: { _ in })
+                self.coordinator?.replaceRootWithListView()
             }
             .disposed(by: disposeBag)
 

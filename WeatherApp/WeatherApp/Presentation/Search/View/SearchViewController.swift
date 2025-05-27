@@ -12,12 +12,14 @@ import RxCocoa
 class SearchViewController: UIViewController {
     var onDismiss: ((Location?) -> Void)?
     
+    weak var coordinator: AppCoordinator?
     private let searchView = SearchView()
     private let noResultsView = NoResultsView()
     private let viewModel: SearchViewModel
     private var disposeBag = DisposeBag()
     
-    init(viewModel: SearchViewModel) {
+    init(viewModel: SearchViewModel, coordinator: AppCoordinator?) {
+        self.coordinator = coordinator
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -125,6 +127,9 @@ class SearchViewController: UIViewController {
                 guard let self, let location else { return }
 
                 print("LocationViewModel로 넘길 값: \(location)")
+                
+                self.coordinator?.pushLocationPageView(from: self, location: location)
+                
             }
             .disposed(by: disposeBag)
     }

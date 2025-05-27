@@ -12,10 +12,14 @@ final class SearchViewControllerFactory {
         self.viewModelFactory = viewModelFactory
     }
 
-    func makeSearchViewController(onDismiss: @escaping (Location?) -> Void) -> SearchViewController {
+    func makeSearchViewController(
+        coordinator: AppCoordinator,
+        onDismiss: @escaping (Location?) -> Void
+    ) -> SearchViewController {
         let viewModel = viewModelFactory.makeSearchViewModel()
-        let vc = SearchViewController(viewModel: viewModel)
+        let vc = SearchViewController(viewModel: viewModel, coordinator: coordinator)
         vc.onDismiss = onDismiss
+        vc.coordinator = coordinator
         return vc
     }
 }

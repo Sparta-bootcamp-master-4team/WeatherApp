@@ -74,7 +74,7 @@ class ListViewController: UIViewController {
             .drive { [weak self] _ in
                 guard let self else { return }
                 
-                print("back button tapped")
+                self.coordinator?.start()
             }
             .disposed(by: disposeBag)
         
