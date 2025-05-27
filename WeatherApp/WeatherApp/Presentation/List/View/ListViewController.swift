@@ -121,6 +121,16 @@ class ListViewController: UIViewController {
                 self?.viewModel.input.accept(.didDeleteTableViewCell($0))
             }
             .disposed(by: disposeBag)
+        
+        // 셀 선택 후 ViewModel에서 전달된 Location을 구독 → Coordinator로 전환
+        viewModel.output.selectedLocation
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] location in
+                guard let self else { return }
+                self.coordinator?.pushLocationPageView(from: self, location: location)
+            })
+            .disposed(by: disposeBag)
+
     }
     
     private func pushSearchViewController() {
