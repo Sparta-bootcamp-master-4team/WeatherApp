@@ -10,11 +10,19 @@ import UIKit
 class MainPageViewController: UIViewController {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
+    private let refreshControl = UIRefreshControl()
+
     private let mainViewModel: MainViewModel
     private let mainDetailViewModel: MainDetailViewModel
     private let viewModel: PageViewModel
     private let coordinator: AppCoordinator
+
     private lazy var mainDetailVC = MainDetailViewController(viewModel: self.mainDetailViewModel)
+    private lazy var mainVC = MainViewController(
+        viewModel: self.mainViewModel,
+        coordinator: self.coordinator
+    )
+    
     init(
         viewModel: PageViewModel,
         mainViewModel: MainViewModel,
@@ -26,11 +34,8 @@ class MainPageViewController: UIViewController {
         self.mainDetailViewModel = mainDetailViewModel
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-    private lazy var mainVC = MainViewController(
-        viewModel: self.mainViewModel,
-        coordinator: self.coordinator
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented.")
     }
