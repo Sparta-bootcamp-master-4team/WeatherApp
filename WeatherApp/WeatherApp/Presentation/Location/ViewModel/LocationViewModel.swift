@@ -49,6 +49,12 @@ final class LocationViewModel {
     var currentDate: Driver<String>?
 
     let didEnterRelay = PublishRelay<Void>()
+    
+    private let isSaved: Bool
+    
+    var isLocationSaved: Bool {
+        return isSaved
+    }
 
     init(
         location: Location,
@@ -57,7 +63,8 @@ final class LocationViewModel {
         fetchCurrentWeatherUseCase: FetchCurrentWeatherUseCaseProtocol,
         reverseGeocodingUseCase: ReverseGeocodingUseCaseProtocol,
         getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperatureRangeUseCaseProtocol,
-        saveLocationUseCase: SaveLocationUseCaseProtocol
+        saveLocationUseCase: SaveLocationUseCaseProtocol,
+        isSaved: Bool = false
     ) {
         self.selectedLocation = location
         self.fetchDailyWeatherUseCase = fetchDailyWeatherUseCase
@@ -66,6 +73,7 @@ final class LocationViewModel {
         self.reverseGeocodingUseCase = reverseGeocodingUseCase
         self.getDailyWeatherAndTemperatureRangeUseCase = getDailyWeatherAndTemperatureRangeUseCase
         self.saveLocationUseCase = saveLocationUseCase
+        self.isSaved = isSaved
 
         bind()
     }

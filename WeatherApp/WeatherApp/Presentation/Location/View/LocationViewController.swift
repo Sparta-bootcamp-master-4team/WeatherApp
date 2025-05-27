@@ -148,6 +148,10 @@ private extension LocationViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         viewModel.didEnterRelay.accept(())
         animatedWeatherView.play()
+        
+        if viewModel.isLocationSaved {
+            saveButton.isHidden = true
+        }
     }
 
     func setHierarchy() {
