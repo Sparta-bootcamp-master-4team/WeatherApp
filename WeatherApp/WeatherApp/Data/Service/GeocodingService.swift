@@ -36,7 +36,6 @@ final class GeocodingService: GeocodingServiceProtocol {
         guard let url = Bundle.main.url(forResource: "dongList", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let list = try? JSONDecoder().decode([String].self, from: data) else {
-            print("동 리스트 로드 실패")
             return []
         }
         return list

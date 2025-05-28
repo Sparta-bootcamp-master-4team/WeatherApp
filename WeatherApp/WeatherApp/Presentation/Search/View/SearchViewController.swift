@@ -119,20 +119,10 @@ class SearchViewController: UIViewController {
             .skip(1)
             .drive { [weak self] location in
                 guard let self, let location else { return }
-
-                print("LocationViewModel로 넘길 값: \(location)")
                 
                 self.coordinator?.pushLocationPageView(from: self, location: location)
-//                popViewController()
             }
             .disposed(by: disposeBag)
-    }
-    
-    private func popViewController() {
-        onDismiss?(viewModel.output.searchCoordinatesResult.value)
-        
-        // dismiss(animated: true)
-        navigationController?.popViewController(animated: true)
     }
     
     // 키보드가 나타날 때, 테이블 뷰 셀 아래쪽이 가려지는 현상 방지

@@ -58,10 +58,6 @@ final class ReverseGeocodingService: ReverseGeocodingServiceProtocol {
                     return
                 }
 
-                if let data = data {
-                    print(String(data: data, encoding: .utf8))
-                }
-
                 guard
                     let data = data,
                     let decoded = try? JSONDecoder().decode(RegionResponse.self, from: data),
