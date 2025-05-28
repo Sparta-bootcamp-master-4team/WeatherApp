@@ -187,7 +187,7 @@ https://github.com/user-attachments/assets/18e497e1-d56e-4900-95df-fe207a7da1e2
 
 https://github.com/user-attachments/assets/a89f0bd0-6823-474c-b396-fcb4411e702a
 
-# UIPageViewController + Pull to Refresh(PTR) 충돌 문제 해결기
+# UIPageViewController + Pull to Refresh(PTR) 충돌 문제 트러블 슈팅 🚀
 ### **문제 상황**
 
 날씨 앱의 메인 화면은 UIPageViewController 기반으로 구성되어 있으며, 위/아래로 스와이프하여 각각의 페이지를 이동할 수 있도록 설계되어 있습니다. 이 중 첫 번째 페이지(메인 날씨 화면)에서는 사용자가 아래로 끌어당겼을 때 **새로고침(Pull to Refresh)** 기능이 동작해야 했습니다.
