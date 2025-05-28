@@ -19,7 +19,7 @@ final class LocationPageViewController: UIViewController {
     private let pageViewModel: PageViewModel
     private let coordinator: AppCoordinator
 
-    private lazy var mainVC = LocationViewController(viewModel: mainViewModel)
+    private lazy var mainVC = LocationViewController(viewModel: mainViewModel, coordinator: coordinator)
     private lazy var detailVC = LocationDetailViewController(viewModel: detailViewModel)
 
     init(

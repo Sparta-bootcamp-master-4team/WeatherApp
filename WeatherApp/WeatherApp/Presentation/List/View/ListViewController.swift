@@ -43,6 +43,7 @@ class ListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = false
         
         viewModel.input.accept(.onAppear)
     }
@@ -127,7 +128,7 @@ class ListViewController: UIViewController {
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] location in
                 guard let self else { return }
-                self.coordinator?.pushLocationPageView(from: self, location: location)
+                self.coordinator?.pushLocationPageView(from: self, location: location, isSaved: true)
             })
             .disposed(by: disposeBag)
 

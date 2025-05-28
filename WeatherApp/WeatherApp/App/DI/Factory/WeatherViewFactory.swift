@@ -42,9 +42,10 @@ final class WeatherViewModelFactory {
         return PageViewModel()
     }
     
-    func makeLocationViewModel(location: Location) -> LocationViewModel {
+    func makeLocationViewModel(location: Location, isSaved: Bool = false) -> LocationViewModel {
         let repo = WeatherRepositoryImpl()
         let reverseRepo = ReverseGeocodingRepository(reverseGeocodingService: ReverseGeocodingService())
+        let saveRepo = CoreDataLocationRepository()
         
         return LocationViewModel(
             location: location,
@@ -55,7 +56,9 @@ final class WeatherViewModelFactory {
             getDailyWeatherAndTemperatureRangeUseCase: GetDailyWeatherAndTemperaturnRangeUseCase(
                 fetchDailyWeatherUseCase: FetchDailyWeatherUseCase(repository: repo),
                 fetchTemperatureRangeUseCase: FetchDailyTemperatureRangeUseCase(repository: repo)
-            )
+            ),
+            saveLocationUseCase: SaveLocationUseCase(repository: saveRepo),
+            isSaved: isSaved
         )
     }
     

@@ -15,9 +15,10 @@ final class LocationViewControllerFactory {
     
     func makeLocationPageViewController(
         coordinator: AppCoordinator,
-        location: Location
+        location: Location,
+        isSaved: Bool
     ) -> LocationPageViewController {
-        let mainVM = weatherVMFactory.makeLocationViewModel(location: location)
+        let mainVM = weatherVMFactory.makeLocationViewModel(location: location, isSaved: isSaved)
         let detailVM = weatherVMFactory.makeLocationDetailViewModel(mainVM: mainVM)
         let pageVM = weatherVMFactory.makePageViewModel()
 

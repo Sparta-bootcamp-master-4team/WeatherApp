@@ -13,7 +13,7 @@ final class DailyWeatherCell: UICollectionViewCell {
     
     private let weekdayLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .nanumSquare(size: 16, weight: "B")
         return label
     }()
     
@@ -25,7 +25,7 @@ final class DailyWeatherCell: UICollectionViewCell {
     
     private let popLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .regular)
+        label.font = .nanumSquare(size: 10)
         return label
     }()
     
@@ -38,13 +38,14 @@ final class DailyWeatherCell: UICollectionViewCell {
     
     private let highTempLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .nanumSquare(size: 14, weight: "B")
         return label
     }()
     
     private let lowTempLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .nanumSquare(size: 14)
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -53,7 +54,7 @@ final class DailyWeatherCell: UICollectionViewCell {
     private let dailyTemperatureRangeStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
-        sv.spacing = 4
+        sv.spacing = 8
         return sv
     }()
     
@@ -100,7 +101,7 @@ final class DailyWeatherCell: UICollectionViewCell {
         weekdayLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.centerY.equalToSuperview()
-            $0.width.equalTo(28)
+            $0.width.equalTo(30)
         }
         
         weatherIconImageView.snp.makeConstraints {
@@ -134,9 +135,15 @@ final class DailyWeatherCell: UICollectionViewCell {
                 weatherIconImageView.kf.setImage(with: url)
             }
         }
-        popLabel.text = "\(dailyWeather.pop)%"
-        highTempLabel.text = "\(Int(dailyWeather.temp.max))"
-        lowTempLabel.text = "\(Int(dailyWeather.temp.min))"
+        
+        let pop = Int(dailyWeather.pop * 100)
+        if pop < 10 {
+            popLabel.isHidden = true
+        } else {
+            popLabel.text = "\(pop)%"
+        }
+        highTempLabel.text = "\(Int(dailyWeather.temp.max))°"
+        lowTempLabel.text = "\(Int(dailyWeather.temp.min))°"
         
         dailyTemperatureRange.configure(
             min: dailyWeather.temp.min,

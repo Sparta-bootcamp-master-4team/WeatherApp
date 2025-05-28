@@ -13,12 +13,28 @@ import Lottie
 final class LocationViewController: UIViewController {
     private let viewModel: LocationViewModel
     private let disposeBag = DisposeBag()
+    private weak var coordinator: AppCoordinator?
+    
+    private let backButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.tintColor = .label
+        return button
+    }()
 
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.font = .nanumSquare(size: 20)
         return label
+    }()
+    
+    private let saveButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("추가", for: .normal)
+        button.titleLabel?.font = .nanumSquare(size: 16)
+        button.setTitleColor(.label, for: .normal)
+        return button
     }()
 
     private let currentTempLabel: UILabel = {
@@ -92,8 +108,9 @@ final class LocationViewController: UIViewController {
         return stack
     }()
 
-    init(viewModel: LocationViewModel) {
+    init(viewModel: LocationViewModel, coordinator: AppCoordinator) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -131,17 +148,31 @@ private extension LocationViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         viewModel.didEnterRelay.accept(())
         animatedWeatherView.play()
+        
+        if viewModel.isLocationSaved {
+            saveButton.isHidden = true
+        }
     }
 
     func setHierarchy() {
-        view.addSubviews(views: dateLabel, currentTempLabel, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
+        view.addSubviews(views: backButton, dateLabel, saveButton, currentTempLabel, tempStackView, characterImageView, animatedWeatherView, locationWeatherLabel, bottomStackView)
         tempStackView.addArrangedSubviews(views: minTempLabel, maxTempLabel)
         bottomStackView.addArrangedSubviews(views: downNoticeLabel, downArrowImageView)
     }
 
     func setConstraints() {
-        dateLabel.snp.makeConstraints {
+        backButton.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(28)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
+        }
+        
+        dateLabel.snp.makeConstraints {
+            $0.leading.equalTo(backButton.snp.trailing).offset(8)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
+        }
+        
+        saveButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(28)
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
 
@@ -182,6 +213,16 @@ private extension LocationViewController {
     }
 
     func setBindings() {
+        backButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        saveButton.rx.tap
+            .bind(to: viewModel.saveLocationTrigger)
+            .disposed(by: disposeBag)
+        
         viewModel.currentTemp?
             .drive(onNext: { [weak self] value in
                 guard let self else { return }
@@ -240,6 +281,18 @@ private extension LocationViewController {
                 guard let self else { return }
                 self.dateLabel.text = value
             })
+            .disposed(by: disposeBag)
+        
+        viewModel.saveResult
+            .bind { [weak self] result in
+                switch result {
+                case .success:
+                    self?.coordinator?.replaceRootWithListView()
+                case .failure(let error):
+                    print("저장 실패: \(error.localizedDescription)")
+                    self?.showAlert(title: "실패", message: "위치 저장 실패")
+                }
+            }
             .disposed(by: disposeBag)
     }
 }

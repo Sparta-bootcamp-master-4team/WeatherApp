@@ -37,10 +37,11 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
     
-    func pushLocationPageView(from: UIViewController, location: Location) {
+    func pushLocationPageView(from: UIViewController, location: Location, isSaved: Bool = false) {
         let locationPageVC = container.locationViewControllerFactory.makeLocationPageViewController(
             coordinator: self,
-            location: location
+            location: location,
+            isSaved: isSaved
         )
         from.navigationController?.pushViewController(locationPageVC, animated: true)
     }
