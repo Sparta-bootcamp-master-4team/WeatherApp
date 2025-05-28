@@ -1,4 +1,4 @@
-# 날씨앱
+# 메이웨더(날씨앱)
 > 사용자의 현재 위치 또는 검색한 지역을 기반으로 실시간 기상 정보를 제공하는 서비스 입니다.
 > 복잡한 레이아웃 구성과 비동기 데이터 흐름을  **RxSwift**,  **Clean Architecture**,  **MVVM**,  **Coordinator**  패턴으로 설계한 팀 과제입니다.
 
@@ -15,6 +15,13 @@
 - ✅ **UIPageViewController의 PTR 제약을 구조적으로 해결한 트러블슈팅 경험**
 - ✅ **GPT 기반 날씨 캐릭터 에셋 제작 및 GIF 연동을 통한 감성 UI 구현**
 
+# 역할 분담
+- 송규섭: 메인 날씨 화면 구현, UIUX 디자인 
+- 신재욱: 검색 모델, 위치 모델, 지역 모델 구현
+- 김신영: 상세 날씨 화면 구현
+- 권순욱: 관심지역 리스트, 검색 화면(뷰 ~ 뷰 모델)
+- 양원식: 날씨 API, 관련 UseCase 및 Repository 구현, Coordinator 패턴 적용
+
 # 주요 기능
 - 현재 위치 기반 날씨 조회
 - 지역 검색 및 자동 완성
@@ -27,181 +34,153 @@
 
 # 프로젝트 구조
 ```
-├── README.md
-└── WeatherApp
-    ├── WeatherApp
-    │   ├── App
-    │   │   ├── AppDelegate.swift
-    │   │   ├── Coordinator
-    │   │   │   ├── AppCoordinator.swift
-    │   │   │   └── Protocol
-    │   │   │       └── Coordinator.swift
-    │   │   ├── DI
-    │   │   │   ├── DIContainer.swift
-    │   │   │   └── Factory
-    │   │   │       ├── ListViewControllerFactory.swift
-    │   │   │       ├── ListViewModelFactory.swift
-    │   │   │       ├── SearchViewControllerFactory.swift
-    │   │   │       ├── SearchViewModelFactory.swift
-    │   │   │       ├── WeatherViewControllerFactory.swift
-    │   │   │       └── WeatherViewFactory.swift
-    │   │   └── SceneDelegate.swift
-    │   ├── Base.lproj
-    │   │   └── LaunchScreen.storyboard
-    │   ├── Common
-    │   │   └── Extensions
-    │   │       ├── Bundle+Keys.swift
-    │   │       ├── Date+.swift
-    │   │       ├── DateFormatter+.swift
-    │   │       ├── UICollectionView+.swift
-    │   │       ├── UIFont+.swift
-    │   │       ├── UIStackView+.swift
-    │   │       ├── UIView+.swift
-    │   │       └── ViewController+.swift
-    │   ├── Data
-    │   │   ├── PersistentStorages
-    │   │   │   └── CoreData
-    │   │   │       ├── Entity+CoreDataClass.swift
-    │   │   │       ├── Entity+CoreDataProperties.swift
-    │   │   │       └── Model.xcdatamodeld
-    │   │   │           └── Model.xcdatamodel
-    │   │   │               └── contents
-    │   │   ├── Repositories
-    │   │   │   ├── CoreDataLocationRepository.swift
-    │   │   │   ├── GeocodingRepository.swift
-    │   │   │   ├── LocationRepository.swift
-    │   │   │   ├── ReverseGeocodingRepository.swift
-    │   │   │   └── WeatherRepository.swift
-    │   │   └── Service
-    │   │       ├── GeocodingService.swift
-    │   │       ├── LocationService.swift
-    │   │       ├── ReverseGeocodingService.swift
-    │   │       └── WeatherAPIService.swift
-    │   ├── Domain
-    │   │   ├── Entities
-    │   │   │   ├── CurrentWeather.swift
-    │   │   │   ├── DailyWeather.swift
-    │   │   │   ├── DailyWeatherAndTemperaturnRange.swift
-    │   │   │   ├── HourlyWeather.swift
-    │   │   │   ├── Location.swift
-    │   │   │   ├── Region.swift
-    │   │   │   ├── TemperatureInfo.swift
-    │   │   │   ├── TemperatureRange.swift
-    │   │   │   ├── WeatherDescription.swift
-    │   │   │   └── WeatherResponse.swift
-    │   │   ├── Enums
-    │   │   │   └── WeatherCondition.swift
-    │   │   ├── Interfaces
-    │   │   │   ├── Repositories
-    │   │   │   │   ├── CoreDataLocationRepositoryProtocol.swift
-    │   │   │   │   ├── GeocodingRepositoryProtocol.swift
-    │   │   │   │   ├── LocationRepositoryProtocol.swift
-    │   │   │   │   ├── ReverseGeocodingRepositoryProtocol.swift
-    │   │   │   │   └── WeatherRepositoryProtocol.swift
-    │   │   │   └── UseCases
-    │   │   │       ├── DeleteLocationUseCaseProtocol.swift
-    │   │   │       ├── FetchAllWeatherUseCaseProtocol.swift
-    │   │   │       ├── FetchCoordinateUseCaseProtocol.swift
-    │   │   │       ├── FetchCurrentWeatherUseCaseProtocol.swift
-    │   │   │       ├── FetchDailyTemperatureRangeUseCaseProtocol.swift
-    │   │   │       ├── FetchDailyWeatherUseCaseProtocol.swift
-    │   │   │       ├── FetchHourlyWeatherUseCaseProtocol.swift
-    │   │   │       ├── FetchLocationsUseCaseProtocol.swift
-    │   │   │       ├── GetCurrentLocationUseCaseProtocol.swift
-    │   │   │       ├── GetDailyWeatherAndTemperatureRangeUseCaseProtocol.swift
-    │   │   │       ├── ReverseGeocodingUseCaseProtocol.swift
-    │   │   │       ├── SaveLocationUseCaseProtocol.swift
-    │   │   │       └── SearchDongsUseCaseProtocol.swift
-    │   │   └── UseCases
-    │   │       ├── DeleteLocationUseCase.swift
-    │   │       ├── FetchCoordinateUseCase.swift
-    │   │       ├── FetchCurrentWeatherUseCase.swift
-    │   │       ├── FetchDailyTemperatureRangeUseCase.swift
-    │   │       ├── FetchDailyWeatherUseCase.swift
-    │   │       ├── FetchHourlyWeatherUseCase.swift
-    │   │       ├── FetchLocationsUseCase.swift
-    │   │       ├── FetchWeatherUseCase.swift
-    │   │       ├── GetCurrentLocationUseCase.swift
-    │   │       ├── GetDailyWeatherAndTemperaturnRangeUseCase.swift
-    │   │       ├── ReverseGeocodingUseCase.swift
-    │   │       ├── SaveLocationUseCase.swift
-    │   │       └── SearchDongsUseCase.swift
-    │   ├── Presentation
-    │   │   ├── List
-    │   │   │   ├── View
-    │   │   │   │   ├── Cell
-    │   │   │   │   │   └── ListViewCell.swift
-    │   │   │   │   ├── ListView.swift
-    │   │   │   │   └── ListViewController.swift
-    │   │   │   └── ViewModel
-    │   │   │       └── ListViewModel.swift
-    │   │   ├── Main
-    │   │   │   ├── View
-    │   │   │   │   ├── Cell
-    │   │   │   │   │   ├── DailyWeatherCell.swift
-    │   │   │   │   │   └── HourlyWeatherCell.swift
-    │   │   │   │   ├── DailyTemperatureRange.swift
-    │   │   │   │   ├── MainDetailViewController.swift
-    │   │   │   │   ├── MainPageViewController.swift
-    │   │   │   │   ├── MainViewController.swift
-    │   │   │   │   ├── Section
-    │   │   │   │   │   ├── MainSectionModel.swift
-    │   │   │   │   │   └── SectionItem.swift
-    │   │   │   │   ├── Section.swift
-    │   │   │   │   └── SectionHeaderView.swift
-    │   │   │   └── ViewModel
-    │   │   │       ├── MainDetailViewModel.swift
-    │   │   │       ├── MainViewModel.swift
-    │   │   │       └── PageViewModel.swift
-    │   │   ├── Search
-    │   │   │   ├── View
-    │   │   │   │   ├── Cell
-    │   │   │   │   │   ├── NoResultsView.swift
-    │   │   │   │   │   └── SearchViewCell.swift
-    │   │   │   │   ├── SearchView.swift
-    │   │   │   │   └── SearchViewController.swift
-    │   │   │   └── ViewModel
-    │   │   │       └── SearchViewModel.swift
-    │   │   ├── Location
-    │   │   │   ├── View
-    │   │   │   │   ├── LocationDetailViewController.swift
-    │   │   │   │   ├── LocationPageViewController.swift
-    │   │   │   │   └── LocationViewController.swift
-    │   │   │   └── ViewModel
-    │   │   │       ├── LocationDetailViewModel.swift
-    │   │   │       └── LocationViewModel.swift
-    │   │   └── Protocol
-    │   │       └── ViewModelProtocol.swift
-    │   └── Resources
-    │       ├── AnimatedIcons
-    │       │   ├── clear.json
-    │       │   ├── cloudy.json
-    │       │   ├── fog.json
-    │       │   ├── partlyCloudy.json
-    │       │   ├── rain.json
-    │       │   ├── shower.json
-    │       │   ├── snow.json
-    │       │   └── thunderStorm.json
-    │       ├── Assets.xcassets
-    │       │   ├── AccentColor.colorset
-    │       │   ├── AppIcon.appiconset
-    │       │   ├── Characters
-    │       │   ├── Colors
-    │       │   └── Contents.json
-    │       ├── dongList.json
-    │       ├── Fonts
-    │       │   ├── NanumSquareB.ttf
-    │       │   ├── NanumSquareEB.ttf
-    │       │   ├── NanumSquareL.ttf
-    │       │   └── NanumSquareR.ttf
-    │       ├── Info.plist
-    │       └── Secrets.xcconfig
-    ├── WeatherApp.xcodeproj
-    ├── WeatherAppTests
-    │   └── WeatherAppTests.swift
-    └── WeatherAppUITests
-        ├── WeatherAppUITests.swift
-        └── WeatherAppUITestsLaunchTests.swift
+WeatherApp
+├── App
+│   ├── AppDelegate.swift
+│   ├── SceneDelegate.swift
+│   ├── Coordinator
+│   │   ├── AppCoordinator.swift
+│   │   └── Protocol
+│   │       └── Coordinator.swift
+│   └── DI
+│       ├── DIContainer.swift
+│       └── Factory
+│           ├── ListViewControllerFactory.swift
+│           ├── ListViewModelFactory.swift
+│           ├── SearchViewControllerFactory.swift
+│           ├── SearchViewModelFactory.swift
+│           ├── WeatherViewControllerFactory.swift
+│           └── WeatherViewFactory.swift
+├── Common
+│   └── Extensions
+│       ├── Bundle+Keys.swift
+│       ├── Date+.swift
+│       ├── DateFormatter+.swift
+│       ├── UICollectionView+.swift
+│       ├── UIFont+.swift
+│       ├── UIStackView+.swift
+│       ├── UIView+.swift
+│       └── ViewController+.swift
+├── Data
+│   ├── Repositories
+│   │   ├── CoreDataLocationRepository.swift
+│   │   ├── GeocodingRepository.swift
+│   │   ├── LocationRepository.swift
+│   │   ├── ReverseGeocodingRepository.swift
+│   │   └── WeatherRepository.swift
+│   └── Service
+│       ├── GeocodingService.swift
+│       ├── LocationService.swift
+│       ├── ReverseGeocodingService.swift
+│       └── WeatherAPIService.swift
+├── Domain
+│   ├── Entities
+│   │   ├── CurrentWeather.swift
+│   │   ├── DailyWeather.swift
+│   │   ├── DailyWeatherAndTemperaturnRange.swift
+│   │   ├── HourlyWeather.swift
+│   │   ├── Location.swift
+│   │   ├── Region.swift
+│   │   ├── TemperatureInfo.swift
+│   │   ├── TemperatureRange.swift
+│   │   ├── WeatherDescription.swift
+│   │   └── WeatherResponse.swift
+│   ├── Enums
+│   │   └── WeatherCondition.swift
+│   ├── Interfaces
+│   │   ├── Repositories
+│   │   │   ├── CoreDataLocationRepositoryProtocol.swift
+│   │   │   ├── GeocodingRepositoryProtocol.swift
+│   │   │   ├── LocationRepositoryProtocol.swift
+│   │   │   ├── ReverseGeocodingRepositoryProtocol.swift
+│   │   │   └── WeatherRepositoryProtocol.swift
+│   │   └── UseCases
+│   │       ├── DeleteLocationUseCaseProtocol.swift
+│   │       ├── FetchAllWeatherUseCaseProtocol.swift
+│   │       ├── FetchCoordinateUseCaseProtocol.swift
+│   │       ├── FetchCurrentWeatherUseCaseProtocol.swift
+│   │       ├── FetchDailyTemperatureRangeUseCaseProtocol.swift
+│   │       ├── FetchDailyWeatherUseCaseProtocol.swift
+│   │       ├── FetchHourlyWeatherUseCaseProtocol.swift
+│   │       ├── FetchLocationsUseCaseProtocol.swift
+│   │       ├── GetCurrentLocationUseCaseProtocol.swift
+│   │       ├── GetDailyWeatherAndTemperatureRangeUseCaseProtocol.swift
+│   │       ├── ReverseGeocodingUseCaseProtocol.swift
+│   │       ├── SaveLocationUseCaseProtocol.swift
+│   │       └── SearchDongsUseCaseProtocol.swift
+│   └── UseCases
+│       ├── DeleteLocationUseCase.swift
+│       ├── FetchCoordinateUseCase.swift
+│       ├── FetchCurrentWeatherUseCase.swift
+│       ├── FetchDailyTemperatureRangeUseCase.swift
+│       ├── FetchDailyWeatherUseCase.swift
+│       ├── FetchHourlyWeatherUseCase.swift
+│       ├── FetchLocationsUseCase.swift
+│       ├── FetchWeatherUseCase.swift
+│       ├── GetCurrentLocationUseCase.swift
+│       ├── GetDailyWeatherAndTemperaturnRangeUseCase.swift
+│       ├── ReverseGeocodingUseCase.swift
+│       ├── SaveLocationUseCase.swift
+│       └── SearchDongsUseCase.swift
+├── Presentation
+│   ├── List
+│   │   ├── View
+│   │   │   ├── Cell
+│   │   │   │   └── ListViewCell.swift
+│   │   │   ├── ListView.swift
+│   │   │   └── ListViewController.swift
+│   │   └── ViewModel
+│   │       └── ListViewModel.swift
+│   ├── Main
+│   │   ├── View
+│   │   │   ├── Cell
+│   │   │   │   ├── DailyWeatherCell.swift
+│   │   │   │   └── HourlyWeatherCell.swift
+│   │   │   ├── DailyTemperatureRange.swift
+│   │   │   ├── MainDetailViewController.swift
+│   │   │   ├── MainPageViewController.swift
+│   │   │   ├── MainViewController.swift
+│   │   │   ├── Section
+│   │   │   │   ├── MainSectionModel.swift
+│   │   │   │   └── SectionItem.swift
+│   │   │   ├── Section.swift
+│   │   │   └── SectionHeaderView.swift
+│   │   └── ViewModel
+│   │       ├── MainDetailViewModel.swift
+│   │       ├── MainViewModel.swift
+│   │       └── PageViewModel.swift
+│   ├── Search
+│   │   ├── View
+│   │   │   ├── Cell
+│   │   │   │   ├── NoResultsView.swift
+│   │   │   │   └── SearchViewCell.swift
+│   │   │   ├── SearchView.swift
+│   │   │   └── SearchViewController.swift
+│   │   └── ViewModel
+│   │       └── SearchViewModel.swift
+│   ├── Location
+│   │   ├── View
+│   │   │   ├── LocationDetailViewController.swift
+│   │   │   ├── LocationPageViewController.swift
+│   │   │   └── LocationViewController.swift
+│   │   └── ViewModel
+│   │       ├── LocationDetailViewModel.swift
+│   │       └── LocationViewModel.swift
+│   └── Protocol
+│       └── ViewModelProtocol.swift
+├── Resources
+│   ├── Assets.xcassets
+│   │   ├── AppIcon.appiconset
+│   │   └── Contents.json
+│   ├── dongList.json
+│   ├── Fonts
+│   │   ├── NanumSquareB.ttf
+│   │   ├── NanumSquareEB.ttf
+│   │   ├── NanumSquareL.ttf
+│   │   └── NanumSquareR.ttf
+│   ├── Info.plist
+│   └── Secrets.xcconfig
+└── WeatherApp.xcodeproj
 ```
 # 시연 영상
 https://github.com/user-attachments/assets/18e497e1-d56e-4900-95df-fe207a7da1e2
