@@ -85,7 +85,6 @@ class ListViewController: UIViewController {
             .drive { [weak self] _ in
                 guard let self else { return }
                 
-                print("add button tapped")
                 pushSearchViewController()
             }
             .disposed(by: disposeBag)

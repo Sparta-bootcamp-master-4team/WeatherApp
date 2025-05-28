@@ -288,8 +288,7 @@ private extension LocationViewController {
                 switch result {
                 case .success:
                     self?.coordinator?.replaceRootWithListView()
-                case .failure(let error):
-                    print("저장 실패: \(error.localizedDescription)")
+                case .failure(_):
                     self?.showAlert(title: "실패", message: "위치 저장 실패")
                 }
             }

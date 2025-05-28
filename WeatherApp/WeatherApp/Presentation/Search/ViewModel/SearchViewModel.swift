@@ -48,7 +48,6 @@ final class SearchViewModel: ViewModelProtocol {
                     let results = searchDong(query: text)
                     output.searchDongResults.accept(results)
                 case .didSelectTableViewCell(let dong):
-                    print(dong)
                     let result = fetchCoordinates(query: dong)
                     result
                         .asObservable()

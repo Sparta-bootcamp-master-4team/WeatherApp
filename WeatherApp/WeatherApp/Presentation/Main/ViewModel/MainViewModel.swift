@@ -102,7 +102,6 @@ final class MainViewModel {
                     .subscribe(onSuccess: { [weak self] value in
                         guard let self,
                               let weather = value.weather.first else { return }
-                        print("\(value)\n\n\(value.weather.first?.id)")
                         weatherConditionRelay.accept(weather.id)
                         currentWeatherRelay.accept(value)
                     }).disposed(by: disposeBag)
@@ -135,13 +134,11 @@ final class MainViewModel {
             .map { weathers in
                 guard let max = weathers.first?.temp.max else { return "-" }
 
-                print("최고 기온 : \(Float(max).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(max).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
         todayMinTemp = dailyWeatherRelay
             .map { weathers in
                 guard let min = weathers.first?.temp.min else { return "-" }
-                print("최저 기온 : \(Float(min).rounded(.toNearestOrAwayFromZero))")
                 return "\(Int(Float(min).rounded(.toNearestOrAwayFromZero)))"
             }.asDriver(onErrorJustReturn: "-")
         currentLocationText = Observable.combineLatest(currentLocationTextRelay, currentWeatherRelay)

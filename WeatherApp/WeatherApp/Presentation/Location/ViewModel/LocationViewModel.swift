@@ -146,7 +146,6 @@ final class LocationViewModel {
     private func fetchWeather() {
         guard let lat = Double(selectedLocation.latitude),
               let lon = Double(selectedLocation.longitude) else {
-            print("잘못된 좌표")
             return
         }
 
